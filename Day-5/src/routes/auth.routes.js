@@ -8,6 +8,9 @@ const authRouter = express.Router()
  */
 authRouter.post("/register", register)
 
+/**
+ * GET /api/auth/get-me
+ */
 authRouter.get("/get-me", getMe)
 
 export default authRouter
