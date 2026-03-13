@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { getMe, register } from "../controllers/auth.controller.js";
+import { getMe, register,login } from "../controllers/auth.controller.js";
 
 
 const authRouter = Router();
 
 authRouter.post("/register", register)
+
+authRouter.post("/login", login)
 
 authRouter.get("/get-me", getMe)
 
