@@ -1,15 +1,19 @@
 import userModel from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config.js";
+import crypto from "crypto";
 
 
 export async function register(req, res) {
 
     const { email, password, userType = "user" } = req.body;
 
+
+    const passwordHash = crypto.createHash("sha256").update(password).digest("hex")
+
     const user = await userModel.create({
         email,
-        password,
+        password: passwordHash,
         userType
     })
 
@@ -45,7 +49,9 @@ export async function login(req, res) {
         })
     }
 
-    const isPasswordValid = user.password === password;
+    const passwordHash = crypto.createHash("sha256").update(password).digest("hex")
+
+    const isPasswordValid = user.password === passwordHash;
 
 
     if (!isPasswordValid) {
