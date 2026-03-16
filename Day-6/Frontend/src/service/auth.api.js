@@ -7,7 +7,7 @@ export async function registerUser({ email, password, userType }) {
         email,
         password,
         userType
-    },{withCredentials: true})
+    }, { withCredentials: true })
     return response.data;
 }
 
@@ -20,6 +20,6 @@ export async function loginUser({ email, password }) {
 }
 
 export async function getMeUser() {
-    const response = await axios.get("http://localhost:3000/api/auth/get-me",{withCredentials: true})
+    const response = await axios.get("http://localhost:3000/api/auth/get-me", { withCredentials: true })
     return response.data
 }

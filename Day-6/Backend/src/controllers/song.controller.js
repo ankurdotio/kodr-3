@@ -29,3 +29,12 @@ export async function uploadSong(req, res) {
     });
 
 }
+
+export async function getSongs(req, res) {
+    const songs = await songModel.find()
+
+    res.status(200).json({
+        message: "Songs fetched successfully",
+        songs
+    })
+}
