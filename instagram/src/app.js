@@ -5,11 +5,13 @@ import commentsRoutes from './routes/comments.routes.js';
 import followsRoutes from './routes/follows.routes.js';
 import messagesRoutes from './routes/messages.routes.js';
 import likesRoutes from './routes/likes.routes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // Test route

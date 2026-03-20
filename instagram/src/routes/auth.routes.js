@@ -1,11 +1,11 @@
+import { register } from '../controllers/auth.controller.js';
+import { registerValidation } from '../validator/auth.validator.js';
 import express from 'express';
 
 const router = express.Router();
 
 // POST /api/auth/register
-router.post('/register', (req, res) => {
-  res.json({ message: 'Register endpoint' });
-});
+router.post('/register', registerValidation, register);
 
 // POST /api/auth/login
 router.post('/login', (req, res) => {

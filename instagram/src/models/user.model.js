@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     fullname: {
       type: String,
@@ -31,7 +32,7 @@ const userSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
-      default: '',
+      default: 'https://ik.imagekit.io/hnoglyswo0/avatar-photo-default-user-icon-600nw-2558759027.webp',
     },
     private: {
       type: Boolean,
@@ -43,6 +44,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model('User', userSchema);
+const userModel = mongoose.model('User', userSchema);
 
-export default User;
+export default userModel;
