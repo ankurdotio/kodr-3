@@ -1,5 +1,5 @@
-import { register, googleCallback } from '../controllers/auth.controller.js';
-import { registerValidation } from '../validator/auth.validator.js';
+import { register, googleCallback, login, getMe } from '../controllers/auth.controller.js';
+import { registerValidation, loginValidation } from '../validator/auth.validator.js';
 import passport from 'passport';
 import express from 'express';
 
@@ -9,9 +9,7 @@ const router = express.Router();
 router.post('/register', registerValidation, register);
 
 // POST /api/auth/login
-router.post('/login', (req, res) => {
-  res.json({ message: 'Login endpoint' });
-});
+router.post('/login', loginValidation, login);
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
@@ -25,7 +23,7 @@ router.get("/google",
   })
 )
 
-
+// GET /api/auth/google/callback
 router.get("/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/login",
@@ -33,5 +31,9 @@ router.get("/google/callback",
   }),
   googleCallback
 )
+
+// GET /api/auth/me
+router.get("/me", getMe)
+
 
 export default router;
