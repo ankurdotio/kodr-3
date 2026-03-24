@@ -50,3 +50,69 @@ export async function register(req, res) {
         }
     })
 }
+
+export async function login(req, res) {
+
+    const { username, email, password } = req.body;
+
+    const user = await userModel.findOne({
+        $or: [
+            { username },
+            { email }
+        ]
+    })
+
+    if (!user) {
+        return res.status(400).json({
+            message: "Invalid username/email or password",
+            success: false,
+        })
+    }
+
+    const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+
+    const isPasswordValid = user.password === hashedPassword
+
+    if (!isPasswordValid) {
+        return res.status(400).json({
+            message: "Invalid username/email or password",
+            success: false,
+        })
+    }
+
+    const token = jwt.sign({
+        id: user._id,
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "7d"
+        })
+
+    res.cookie("token", token)
+
+    res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            fullname: user.fullname,
+        }
+    })
+}
+
+export async function getMe(req, res) {
+
+    const user = await userModel.findById(req.user.id)
+
+    return res.status(200).json({
+        message: "User profile fetched successfully",
+        success: true,
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            fullname: user.fullname,
+        }
+    })
+}

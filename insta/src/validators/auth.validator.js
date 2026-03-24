@@ -36,3 +36,19 @@ export const registerValidationRules = [
 
     validate
 ]
+
+export const loginValidationRules = [
+    body("username")
+        .optional()
+        .isString().withMessage("Username must be a string")
+        .isLength({ min: 3, max: 15 }).withMessage("Username must be between 3 and 15 characters"),
+    body("email")
+        .optional()
+        .isEmail().withMessage("Invalid email format"),
+    body("password")
+        .notEmpty().withMessage("Password is required")
+        .isString().withMessage("Password must be a string")
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+
+    validate
+]
