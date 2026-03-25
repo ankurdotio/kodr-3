@@ -116,3 +116,70 @@ export async function getMe(req, res) {
         }
     })
 }
+
+export async function googleAuthCallback(req, res) {
+
+    const { id, displayName, emails: [ { value: email } ] } = req.user;
+    /**
+     * (ankur@gmail.com).split("@") = [ "ankur", "gmail.com" ]
+     */
+    const username = email.split("@")[ 0 ]
+
+    const isUserExists = await userModel.findOne({
+        $or: [
+            { googleId: id },
+            { email },
+            { username }
+        ]
+    })
+
+    if (!isUserExists) {
+        const user = await userModel.create({
+            username,
+            email,
+            fullname: displayName,
+            googleId: id,
+        })
+
+        const token = jwt.sign({
+            id: user._id,
+        }, config.JWT_SECRET,
+            {
+                expiresIn: "7d"
+            })
+
+        res.cookie("token", token)
+
+        return res.status(201).json({
+            message: "User registered successfully",
+            success: true,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                fullname: user.fullname,
+            }
+        })
+    }
+
+    const token = jwt.sign({
+        id: isUserExists._id,
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "7d"
+        })
+
+    res.cookie("token", token)
+
+    return res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        user: {
+            id: isUserExists._id,
+            username: isUserExists.username,
+            email: isUserExists.email,
+            fullname: isUserExists.fullname,
+        }
+    })
+
+}
