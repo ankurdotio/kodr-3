@@ -24,9 +24,10 @@ const userSchema = new mongoose.Schema({
     },
     googleId: {
         type: String,
-        unique: true,
     }
 })
+
+userSchema.index({ googleId: 1 }, { sparse: true, unique: true })
 
 const userModel = mongoose.model("user", userSchema)
 

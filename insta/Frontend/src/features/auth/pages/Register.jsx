@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 const Register = () => {
-    const [formData, setFormData] = useState({
+
+    const { handleRegister } = useAuth();
+    const navigate = useNavigate();
+
+
+    const [ formData, setFormData ] = useState({
         username: '',
         email: '',
         password: '',
         fullname: ''
-    }); 
+    });
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [ e.target.name ]: e.target.value
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
-        // Add your registration logic here
+
+        await handleRegister(formData);
+        navigate("/profile")
+
     };
 
     return (
