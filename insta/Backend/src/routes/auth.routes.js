@@ -15,7 +15,6 @@ authRouter.post("/login", loginValidationRules, login)
 // /api/auth/me
 authRouter.get("/me", authUser, getMe)
 
-
 // /api/auth/google
 authRouter.get("/google",
     passport.authenticate("google", { scope: [ "profile", "email" ] })
