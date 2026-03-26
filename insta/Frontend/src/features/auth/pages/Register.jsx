@@ -6,7 +6,7 @@ const Register = () => {
         email: '',
         password: '',
         fullname: ''
-    });
+    }); 
 
     const handleChange = (e) => {
         setFormData({
