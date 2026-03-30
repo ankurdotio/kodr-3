@@ -30,3 +30,15 @@ export async function login({ usernameOrEmail, password }) {
     return response.data
 
 }
+
+
+export async function getMe() {
+
+    const response = await axios.get("http://localhost:3000/api/auth/me", { withCredentials: true })
+
+    const data = response.data
+
+    return data
+
+}
+
