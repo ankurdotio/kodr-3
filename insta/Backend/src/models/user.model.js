@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     },
     googleId: {
         type: String,
+    },
+    profilePicture: {
+        type: String,
+        default: "https://ik.imagekit.io/hnoglyswo0/avatar-photo-default-user-icon-600nw-2558759027.webp?updatedAt=1773986129958"
     }
 })
 

@@ -32,3 +32,15 @@ export async function createPost(req, res) {
 
 }
 
+export async function getPosts(req, res) {
+
+    const posts = await postModel.find().populate("author", "username profilePicture")
+
+    res.status(200).json({
+        success: true,
+        message: "Posts fetched successfully",
+        posts
+    })
+
+}
+
