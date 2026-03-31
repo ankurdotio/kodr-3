@@ -51,12 +51,12 @@ const Home = () => {
     }, [])
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-8 pb-20">
-            <main className="max-w-[470px] mx-auto w-full px-4 sm:px-0">
+        <div className="w-full flex justify-center pb-20 md:pb-8 pt-4 md:pt-8">
+            <div className="max-w-[470px] w-full px-4 sm:px-0 flex flex-col items-center">
                 {posts.map(post => (
                     <PostCard key={post._id} post={post} />
                 ))}
-            </main>
+            </div>
         </div>
     );
 };
