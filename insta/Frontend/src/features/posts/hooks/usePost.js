@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { setPosts } from "../posts.slice";
-import { getPosts } from "../service/posts.api";
+import { getPosts, createPost } from "../service/posts.api";
 
 
 export const usePost = () => {
@@ -12,8 +12,14 @@ export const usePost = () => {
         dispatch(setPosts(data.posts))
     }
 
+    async function handleCreatePost({ files, caption }) {
+        const data = await createPost({ files, caption })
+        return data
+    }
+
     return {
-        handleGetPosts
+        handleGetPosts,
+        handleCreatePost
     }
 
 }

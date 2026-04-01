@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ImagePlus, X, Upload } from 'lucide-react';
+import { usePost } from '../hooks/usePost';
+import { useNavigate } from 'react-router';
 
 const CreatePost = () => {
     const [ dragActive, setDragActive ] = useState(false);
     const [ caption, setCaption ] = useState('');
+    const fileInputRef = useRef(null);
+    const { handleCreatePost } = usePost()
+
+    const navigate = useNavigate()
+
 
     const handleDrag = function (e) {
         e.preventDefault();
@@ -20,9 +27,36 @@ const CreatePost = () => {
         e.stopPropagation();
         setDragActive(false);
         if (e.dataTransfer.files && e.dataTransfer.files[ 0 ]) {
-            // handle file
+            const files = e.dataTransfer.files;
+            fileInputRef.current = files;
+
+            console.log(files)
         }
     };
+
+    const handleFileChange = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragActive(false);
+        if (e.target.files && e.target.files[ 0 ]) {
+            const files = e.target.files;
+            fileInputRef.current = files;
+        }
+    }
+
+    const handleShare = async () => {
+
+        console.log(fileInputRef.current)
+
+        const data = await handleCreatePost({
+            files: fileInputRef.current,
+            caption
+        })
+
+        navigate('/')
+
+    }
+
 
     return (
         <div className="w-full max-w-4xl h-full  mx-auto pb-12 min-h-[600px] flex items-center justify-center pt-8">
@@ -50,7 +84,9 @@ const CreatePost = () => {
 
                         <label className="relative overflow-hidden inline-flex items-center justify-center px-8 py-3.5 font-medium text-white bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 active:scale-95 transition-all shadow-md hover:shadow-lg shadow-blue-500/20">
                             <span>Select from computer</span>
-                            <input type="file" className="absolute opacity-0 w-full h-full cursor-pointer" accept="image/*,video/*" multiple />
+                            <input
+                                onChange={handleFileChange}
+                                type="file" className="absolute opacity-0 w-full h-full cursor-pointer" accept="image/*,video/*" multiple />
                         </label>
                     </div>
                 </div>
@@ -59,7 +95,9 @@ const CreatePost = () => {
                 <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-white">
                     <div className="p-4 border-b border-zinc-100 flex items-center justify-center relative bg-white/50 backdrop-blur-md sticky top-0 z-10">
                         <h2 className="text-zinc-900 font-semibold tracking-wide">Create new post</h2>
-                        <button className="absolute right-4 text-blue-500 font-medium text-sm hover:text-blue-700 transition-colors">
+                        <button
+                            onClick={handleShare}
+                            className="absolute right-4 text-blue-500 font-medium text-sm hover:text-blue-700 transition-colors">
                             Share
                         </button>
                     </div>
