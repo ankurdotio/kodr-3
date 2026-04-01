@@ -5,6 +5,7 @@ import Home from "../features/posts/pages/Home"
 import Profile from "../features/posts/pages/Profile"
 import CreatePost from "../features/posts/pages/CreatePost"
 import AppLayout from "../components/layouts/AppLayout"
+import Search from "../features/users/pages/Search"
 
 
 export const router = createBrowserRouter([
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
             {
                 path: "/create",
                 element: <CreatePost />
+            },
+            {
+                path: "/search",
+                element: <Search />
             }
         ]
     }
