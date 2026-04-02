@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Search as SearchIcon, XCircle } from 'lucide-react';
 import { useUser } from '../hooks/useUser';
+import debounce from 'lodash/debounce';
 
 const Search = () => {
     const [ query, setQuery ] = useState('');
@@ -15,11 +16,18 @@ const Search = () => {
         setResults(users)
     }
 
+    const debouncedSearch = useMemo(
+        () => debounce((query) => {
+            return fetchSearchUserData(query)
+        }, 500),
+        []
+    );
+
     useEffect(() => {
         if (!query) {
             return
         }
-        fetchSearchUserData(query)
+        debouncedSearch(query)
     }, [ query ])
 
     return (
