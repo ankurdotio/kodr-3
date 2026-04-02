@@ -4,7 +4,7 @@ import Sidebar from '../navigation/Sidebar';
 
 const AppLayout = () => {
     return (
-        <div className="bg-zinc-50 min-h-screen">
+        <div className="bg-zinc-50 min-h-screen md:ps-[244px]">
             {/* Navigation (Sidebar Desktop / Bottom Bar Mobile) */}
             <Sidebar />
 
