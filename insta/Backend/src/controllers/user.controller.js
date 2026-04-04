@@ -1,5 +1,6 @@
 import userModel from "../models/user.model.js";
 import followModel from "../models/follow.model.js";
+import mongoose from "mongoose";
 
 /**
  * GET /api/users/search?q=abhi
@@ -8,25 +9,40 @@ import followModel from "../models/follow.model.js";
 export const searchUser = async (req, res) => {
     const { q } = req.query;
 
-    const users = await userModel.aggregate([
-        {
-            $search: {
-                index: "user_search_feature",
-                autocomplete: {
-                    query: q,
-                    path: "username",
+    const users = await userModel.aggregate(
+        [
+            {
+                $search: {
+                    index: 'user_search_feature',
+                    autocomplete: {
+                        query: q,
+                        path: 'username'
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'follows',
+                    as: 'followStatus',
+                    let: { userId: '$_id' },
+                }
+            },
+            {
+                $unwind: {
+                    path: '$followStatus',
+                    includeArrayIndex: 'string',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    username: '$username',
+                    fullname: '$fullname',
+                    profilePicture: '$profilePicture',
+                    followStatus: '$followStatus.status'
                 }
             }
-        },
-        {
-            $project: {
-                username: 1,
-                fullname: 1,
-                profilePicture: 1,
-                score: { $meta: "searchScore" }
-            }
-        }
-    ])
+        ])
 
     res.status(200).json({
         message: "Users fetched successfully",

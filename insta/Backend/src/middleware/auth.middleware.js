@@ -13,8 +13,6 @@ export function authUser(req, res, next) {
         })
     }
 
-
-
     try {
 
         const decoded = jwt.verify(token, config.JWT_SECRET);
