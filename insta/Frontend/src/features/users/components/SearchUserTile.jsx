@@ -37,7 +37,7 @@ const SearchUserTile = ({ user }) => {
             <button
                 onClick={() => { handleClick(user._id) }}
                 className="bg-[#5e5e5e] hover:bg-[#525252] text-white px-5 py-1.5 cursor-pointer rounded-lg text-[14px] font-medium transition-colors shadow-sm active:scale-95">
-                {requested.includes(user._id) ? "requested" : "follow"}
+                {requested.includes(user._id) || user.followStatus == "requested" ? "requested" : (user.followStatus == "following" ? "following" : "follow")}
             </button>
         </div>
     )

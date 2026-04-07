@@ -23,23 +23,64 @@ export const searchUser = async (req, res) => {
             {
                 $lookup: {
                     from: 'follows',
-                    as: 'followStatus',
-                    let: { userId: '$_id' },
+                    as: 'followDoc',
+                    let: { searchUser: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                '$followee',
+                                                '$$searchUser'
+                                            ]
+                                        },
+                                        {
+                                            $eq: [ '$follower', new mongoose.Types.ObjectId(req.user.id) ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             {
-                $unwind: {
-                    path: '$followStatus',
-                    includeArrayIndex: 'string',
-                    preserveNullAndEmptyArrays: true
+                $addFields: {
+                    followStatus: {
+                        $cond: {
+                            if: {
+                                $eq: [ { $size: '$followDoc' }, 0 ]
+                            },
+                            then: 'not-following',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $eq: [
+                                            {
+                                                $arrayElemAt: [
+                                                    '$followDoc.status',
+                                                    0
+                                                ]
+                                            },
+                                            'pending'
+                                        ]
+                                    },
+                                    then: 'requested',
+                                    else: 'following'
+                                }
+                            }
+                        }
+                    }
                 }
             },
             {
                 $project: {
-                    username: '$username',
-                    fullname: '$fullname',
-                    profilePicture: '$profilePicture',
-                    followStatus: '$followStatus.status'
+                    username: 1,
+                    fullname: 1,
+                    profilePicture: 1,
+                    followStatus: 1
                 }
             }
         ])
