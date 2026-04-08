@@ -7,3 +7,10 @@ export const validateFollowUser = [
         .isMongoId().withMessage("Invalid User ID format"),
     validate
 ]
+
+export const validateFollowRequest = [
+    param("requestId")
+        .notEmpty().withMessage("Request ID is required")
+        .isMongoId().withMessage("Invalid Request ID format"),
+    validate
+]

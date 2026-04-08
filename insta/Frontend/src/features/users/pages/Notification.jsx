@@ -4,13 +4,14 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router';
 
 const Notification = () => {
-    const { handleGetFollowRequests } = useUser();
+    const { handleGetFollowRequests, handleAcceptRequest } = useUser();
     const followRequests = useSelector(state => state.user.followRequests);
 
     useEffect(() => {
         handleGetFollowRequests();
     }, []);
 
+    console.log(followRequests)
     return (
         <div className="w-full max-w-2xl mx-auto px-4 py-8 bg-[#f9f9f9] min-h-screen">
             <h1 className="text-2xl md:text-[2.75rem] font-semibold text-[#2d3435] mb-8 tracking-tight">Notifications</h1>
@@ -40,14 +41,21 @@ const Notification = () => {
                                         <span className="text-[0.875rem] text-[#5a6061]">requested to follow you</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button className="px-4 py-2 bg-[#5e5e5e] hover:bg-[#525252] text-[#f8f8f8] text-[0.875rem] font-medium rounded-md transition-colors duration-200">
-                                        Confirm
-                                    </button>
-                                    <button className="px-4 py-2 bg-[#ebeeef] hover:bg-[#dde4e5] text-[#2d3435] text-[0.875rem] font-medium rounded-md transition-colors duration-200">
-                                        Delete
-                                    </button>
-                                </div>
+
+                                {
+                                    request.status === "accepted" ? <p>accepted</p> :
+                                        (<div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => {
+                                                    handleAcceptRequest({ requestId: request._id })
+                                                }}
+                                                className="px-4 py-2 bg-[#5e5e5e] hover:bg-[#525252] text-[#f8f8f8] text-[0.875rem] font-medium rounded-md transition-colors duration-200">
+                                                accept
+                                            </button>
+                                            <button className="px-4 py-2 bg-[#ebeeef] hover:bg-[#dde4e5] text-[#2d3435] text-[0.875rem] font-medium rounded-md transition-colors duration-200">
+                                                reject
+                                            </button>
+                                        </div>)}
                             </div>
                         ))}
                     </div>
