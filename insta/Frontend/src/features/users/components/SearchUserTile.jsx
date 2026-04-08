@@ -11,7 +11,6 @@ const SearchUserTile = ({ user }) => {
         await handleFollowUser({ userId })
     }
 
-
     return (
         <div key={user._id} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#f2f4f4] transition-colors cursor-pointer">
             <div className="flex items-center gap-4">

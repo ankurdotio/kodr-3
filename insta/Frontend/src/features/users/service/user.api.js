@@ -18,3 +18,14 @@ export async function followUser({ userId }) {
     return response.data
 
 }
+
+
+export async function getFollowRequests() {
+
+    const response = await axios.get("http://localhost:3000/api/users/follow-requests", {
+        withCredentials: true
+    })
+
+    return response.data
+
+}

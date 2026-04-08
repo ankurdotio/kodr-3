@@ -113,6 +113,7 @@ export async function getMe(req, res) {
             username: user.username,
             email: user.email,
             fullname: user.fullname,
+            profilePicture: user.profilePicture,
         }
     })
 }

@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 /**
  * GET /api/users/search?q=abhi
  */
-
 export const searchUser = async (req, res) => {
     const { q } = req.query;
 
@@ -134,5 +133,22 @@ export const followUser = async (req, res) => {
         success: true,
         follow
     })
+}
+
+
+export const getFollowRequests = async (req, res) => {
+    const loggedInUserId = req.user.id
+
+    const requests = await followModel.find({
+        followee: loggedInUserId,
+        status: "pending"
+    }).populate("follower", "username profilePicture")
+
+    return res.status(200).json({
+        message: "Follow requests fetched successfully",
+        success: true,
+        requests
+    })
+
 }
 

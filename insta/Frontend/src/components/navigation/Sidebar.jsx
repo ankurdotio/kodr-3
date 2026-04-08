@@ -1,17 +1,18 @@
 import React from 'react';
 import { NavLink } from 'react-router';
-import { 
-  Home, 
-  Search, 
-  PlusSquare, 
-  Bell, 
-  User, 
-  MessageCircle, 
-  Menu 
+import {
+    Home,
+    Search,
+    PlusSquare,
+    Bell,
+    User,
+    MessageCircle,
+    Menu
 } from 'lucide-react';
+import LoggedInUserTile from '../../features/users/components/LoggedInUserTile';
 
 const Sidebar = () => {
-    
+
     const navItems = [
         { name: 'Home', path: '/', icon: Home },
         { name: 'Search', path: '/search', icon: Search },
@@ -39,11 +40,10 @@ const Sidebar = () => {
                             <NavLink
                                 key={item.name}
                                 to={item.path}
-                                className={({ isActive }) => 
-                                    `flex items-center gap-4 p-3 rounded-lg transition-all duration-200 group ${
-                                        isActive 
-                                            ? 'font-bold' 
-                                            : 'font-normal hover:bg-zinc-50'
+                                className={({ isActive }) =>
+                                    `flex items-center gap-4 p-3 rounded-lg transition-all duration-200 group ${isActive
+                                        ? 'font-bold'
+                                        : 'font-normal hover:bg-zinc-50'
                                     }`
                                 }
                             >
@@ -62,7 +62,8 @@ const Sidebar = () => {
                     })}
                 </div>
 
-                <div className="mt-auto">
+                <div className="mt-auto flex-col gap-2">
+                    <LoggedInUserTile />
                     <button className="flex w-full items-center gap-4 p-3 rounded-lg hover:bg-zinc-50 transition-all duration-200 group">
                         <div className="relative group-hover:scale-110 transition-transform duration-200">
                             <Menu strokeWidth={1.5} size={26} className="text-zinc-900" />
@@ -75,7 +76,7 @@ const Sidebar = () => {
             {/* Mobile Bottom Navigation */}
             <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-zinc-200 px-4 py-2 z-50 pb-[env(safe-area-inset-bottom)]">
                 <div className="flex justify-between items-center h-12">
-                    {navItems.filter(item => ['Home', 'Search', 'Create', 'Messages', 'Profile'].includes(item.name)).map((item) => {
+                    {navItems.filter(item => [ 'Home', 'Search', 'Create', 'Messages', 'Profile' ].includes(item.name)).map((item) => {
                         const Icon = item.icon;
                         return (
                             <NavLink

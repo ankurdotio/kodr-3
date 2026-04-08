@@ -12,7 +12,8 @@ const userSlice = createSlice({
     initialState: {
         followers: [],
         following: [],
-        requested: []
+        requested: [],
+        followRequests: []
     },
     reducers: {
         setFollowers: (state, action) => {
@@ -26,6 +27,9 @@ const userSlice = createSlice({
         },
         appendRequest: (state, action) => {
             state.requested = [ ...state.requested, action.payload ]
+        },
+        setFollowRequests: (state, action) => {
+            state.followRequests = action.payload
         }
 
     }
@@ -35,5 +39,12 @@ const userSlice = createSlice({
  * [user-a,user-b]
  */
 
-export const { setFollowers, setFollowing, setRequested, appendRequest } = userSlice.actions
+export const {
+    setFollowers,
+    setFollowing,
+    setRequested,
+    appendRequest,
+    setFollowRequests
+} = userSlice.actions
+
 export default userSlice.reducer
