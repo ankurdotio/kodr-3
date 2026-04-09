@@ -9,11 +9,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
     name: "user",
+
+    /**
+     * `followers`:array of user ids that are following the loggedInUser
+     * `following`:array of user ids that the loggedInUser is following
+     * `requested`:array of user ids that the loggedInUser has requested to follow
+     * `followRequests`:array of user objects that have requested to follow the loggedInUser
+     * `profile`:object with properties postsCount,posts,followersCount,followingCount of loggedInUser
+     */
     initialState: {
         followers: [],
         following: [],
         requested: [],
-        followRequests: []
+        followRequests: [],
+        profile: null
     },
     reducers: {
         setFollowers: (state, action) => {
@@ -44,6 +53,9 @@ const userSlice = createSlice({
 
                 return request
             })
+        },
+        setProfile: (state, action) => {
+            state.profile = action.payload
         }
 
     }
@@ -64,7 +76,8 @@ export const {
     setRequested,
     appendRequest,
     setFollowRequests,
-    acceptFollowRequestState
+    acceptFollowRequestState,
+    setProfile
 } = userSlice.actions
 
 export default userSlice.reducer

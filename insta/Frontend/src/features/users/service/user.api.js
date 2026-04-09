@@ -37,3 +37,9 @@ export async function acceptFollowRequest({ requestId }) {
 
     return response.data
 }
+
+export async function getProfileData() {
+    const response = await axios.get("http://localhost:3000/api/users/profile", { withCredentials: true })
+
+    return response.data
+}

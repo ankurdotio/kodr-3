@@ -1,5 +1,5 @@
-import { searchUser, followUser, getFollowRequests, acceptFollowRequest } from "../service/user.api";
-import { appendRequest, setFollowRequests, acceptFollowRequestState } from "../../user.slice"
+import { searchUser, followUser, getFollowRequests, acceptFollowRequest, getProfileData } from "../service/user.api";
+import { appendRequest, setFollowRequests, acceptFollowRequestState, setProfile } from "../../user.slice"
 import { useDispatch } from "react-redux";
 
 export const useUser = () => {
@@ -27,12 +27,18 @@ export const useUser = () => {
         dispatch(acceptFollowRequestState(requestId))
     }
 
+    async function handleGetProfileData() {
+        const data = await getProfileData()
+        dispatch(setProfile(data.profile))
+    }
+
 
     return {
         handleSearchUser,
         handleFollowUser,
         handleGetFollowRequests,
-        handleAcceptRequest
+        handleAcceptRequest,
+        handleGetProfileData
     }
 
 }

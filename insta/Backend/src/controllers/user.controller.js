@@ -1,6 +1,7 @@
 import userModel from "../models/user.model.js";
 import followModel from "../models/follow.model.js";
 import mongoose from "mongoose";
+import postModel from "../models/post.model.js";
 
 /**
  * GET /api/users/search?q=abhi
@@ -177,6 +178,37 @@ export const acceptFollowRequest = async (req, res) => {
     return res.status(200).json({
         message: "Follow request accepted successfully",
         success: true,
+    })
+
+}
+
+export const getProfile = async (req, res) => {
+
+    const loggedInUserId = req.user.id
+
+    const followersCount = await followModel.countDocuments({
+        followee: loggedInUserId,
+        status: "accepted"
+    })
+
+    const followingCount = await followModel.countDocuments({
+        follower: loggedInUserId,
+        status: "accepted"
+    })
+
+    const posts = await postModel.find({
+        author: loggedInUserId,
+    }).lean()
+
+    res.status(200).json({
+        message: "Profile fetched successfully",
+        success: true,
+        profile: {
+            posts,
+            followersCount,
+            followingCount,
+            postsCount: posts.length
+        }
     })
 
 }
