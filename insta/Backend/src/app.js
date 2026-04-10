@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.routes.js';
 import postRouter from './routes/post.routes.js';
 import userRouter from './routes/user.routes.js';
+import chatRouter from './routes/chat.routes.js';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import { config } from './config/config.js';
@@ -34,5 +35,6 @@ passport.use(new GoogleStrategy({
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
+app.use("/api/chats", chatRouter);
 
 export default app;

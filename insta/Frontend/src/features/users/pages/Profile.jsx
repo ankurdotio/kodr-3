@@ -8,11 +8,11 @@ const Profile = () => {
     const { handleGetProfileData } = useUser()
     const user = useSelector((store) => store.auth.user)
     const profile = useSelector(store => store.user.profile)
-    const [activeTab, setActiveTab] = useState('posts')
+    const [ activeTab, setActiveTab ] = useState('posts')
 
     useEffect(() => {
         handleGetProfileData()
-    }, [handleGetProfileData])
+    }, [])
 
     if (!user || !profile) {
         return (
@@ -25,13 +25,13 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-[#f9f9f9] text-[#2d3435] font-sans selection:bg-[#c1000a] selection:text-white pb-20">
             <div className="max-w-4xl mx-auto px-4 pt-16 sm:px-6 lg:px-8">
-                
+
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-10 sm:gap-16 mb-12">
                     <div className="flex-shrink-0">
                         <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-[#ffffff] bg-[#f9f9f9] shadow-[0_8px_32px_rgba(45,52,53,0.06)]">
-                            <img 
-                                src={user?.profilePicture} 
-                                alt={user?.username} 
+                            <img
+                                src={user?.profilePicture}
+                                alt={user?.username}
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -73,19 +73,19 @@ const Profile = () => {
 
                 {/* Tabs */}
                 <div className="flex justify-center border-t border-[#ebeeef] mb-6">
-                    <button 
+                    <button
                         onClick={() => setActiveTab('posts')}
                         className={`flex items-center gap-2 px-4 sm:px-6 py-4 text-[0.75rem] font-semibold uppercase tracking-widest transition-colors ${activeTab === 'posts' ? 'text-[#2d3435] border-t-[1.5px] border-[#2d3435] -mt-[1.5px]' : 'text-[#9c9d9d] hover:text-[#5a6061]'}`}>
                         <Grid size={16} strokeWidth={1.5} />
                         <span className="hidden sm:inline">Posts</span>
                     </button>
-                    <button 
+                    <button
                         onClick={() => setActiveTab('reels')}
                         className={`flex items-center gap-2 px-4 sm:px-6 py-4 text-[0.75rem] font-semibold uppercase tracking-widest transition-colors ${activeTab === 'reels' ? 'text-[#2d3435] border-t-[1.5px] border-[#2d3435] -mt-[1.5px]' : 'text-[#9c9d9d] hover:text-[#5a6061]'}`}>
                         <Film size={16} strokeWidth={1.5} />
                         <span className="hidden sm:inline">Reels</span>
                     </button>
-                    <button 
+                    <button
                         onClick={() => setActiveTab('tagged')}
                         className={`flex items-center gap-2 px-4 sm:px-6 py-4 text-[0.75rem] font-semibold uppercase tracking-widest transition-colors ${activeTab === 'tagged' ? 'text-[#2d3435] border-t-[1.5px] border-[#2d3435] -mt-[1.5px]' : 'text-[#9c9d9d] hover:text-[#5a6061]'}`}>
                         <UserSquare size={16} strokeWidth={1.5} />
@@ -99,9 +99,9 @@ const Profile = () => {
                         <div className="grid grid-cols-3 gap-1 sm:gap-4 md:gap-6">
                             {profile?.posts?.map((post) => (
                                 <div key={post._id} className="aspect-[3/4] bg-[#ffffff] sm:rounded-lg overflow-hidden group relative cursor-pointer shadow-[0_2px_8px_rgba(45,52,53,0.02)]">
-                                    <img 
-                                        src={post.media[0]?.url} 
-                                        alt={post.caption || 'Post'} 
+                                    <img
+                                        src={post.media[ 0 ]?.url}
+                                        alt={post.caption || 'Post'}
                                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-[#2d3435]/10 transition-colors duration-300" />

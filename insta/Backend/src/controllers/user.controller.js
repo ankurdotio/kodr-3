@@ -136,7 +136,6 @@ export const followUser = async (req, res) => {
     })
 }
 
-
 export const getFollowRequests = async (req, res) => {
     const loggedInUserId = req.user.id
 
@@ -152,7 +151,6 @@ export const getFollowRequests = async (req, res) => {
     })
 
 }
-
 
 export const acceptFollowRequest = async (req, res) => {
 
