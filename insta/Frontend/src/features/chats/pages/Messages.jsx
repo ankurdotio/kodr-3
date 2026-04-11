@@ -15,6 +15,7 @@ const Messages = () => {
     }, [])
 
     const chatUsers = Object.values(chats)
+    console.log(chatUsers)
 
     if (chatUsers.length == 0) {
         return null
@@ -23,9 +24,7 @@ const Messages = () => {
     return (
         <div className="flex h-screen">
             <div className="w-1/4 border-r border-gray-200">
-                {chatUsers.map((chat) => (
-                    <ChatUserTile key={chat._id} user={chat.followee} />
-                ))}
+
             </div>
             <div className="w-3/4">
                 {/* Chat messages will go here */}
