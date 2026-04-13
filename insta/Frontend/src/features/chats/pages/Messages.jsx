@@ -1,13 +1,34 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useChat } from '../hooks/useChat'
 import { useSelector } from 'react-redux'
+import { io } from 'socket.io-client';
 import ChatUserTile from '../components/ChatUserTile'
+
+
+const URL = 'http://localhost:3000';
+
+
 
 const Messages = () => {
     const { handleGetChatUsers } = useChat()
     const chats = useSelector(store => store.chat.chats)
+    const currentChatId = useSelector(store => store.chat.currentChatId)
+    const [ message, setMessage ] = useState("")
+    const socketRef = useRef(null)
+
+
+
+
+    function handleSendMessage() {
+        socketRef.current.emit("send_message", {
+            message,
+        })
+    }
+
 
     useEffect(() => {
+        const socket = io(URL)
+        socketRef.current = socket
         handleGetChatUsers()
     }, [])
 
@@ -31,16 +52,26 @@ const Messages = () => {
                     </div>
 
                     {/* Input Area placeholder */}
-                    <div className="p-6 bg-[#f2f4f4]/40">
-                        <div className="bg-[#ffffff] rounded-full px-6 py-4 border border-[#adb3b4]/20 flex items-center transition-all focus-within:ring-1 focus-within:ring-[#5e5e5e]/50">
-                            <input
-                                type="text"
-                                placeholder="Type a message..."
-                                className="w-full text-sm outline-none bg-transparent placeholder:text-[#adb3b4] text-[#2d3435]"
-                                disabled
-                            />
+                    {currentChatId && (
+                        <div className="p-6 bg-[#f2f4f4]/40 flex gap-2">
+                            <div className="bg-[#ffffff] rounded-full px-6 py-4 border border-[#adb3b4]/20 flex grow items-center transition-all focus-within:ring-1 focus-within:ring-[#5e5e5e]/50">
+                                <input
+                                    type="text"
+                                    placeholder="Type a message..."
+                                    className="w-full text-sm outline-none bg-transparent placeholder:text-[#adb3b4] text-[#2d3435]"
+                                    value={message}
+                                    onChange={(e) => { setMessage(e.target.value) }}
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleSendMessage}
+                                className="mt-2 px-4 py-2 bg-[#0095f6] text-white rounded-full hover:bg-[#0077cc] transition-colors"
+                            >
+                                Send
+                            </button>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 

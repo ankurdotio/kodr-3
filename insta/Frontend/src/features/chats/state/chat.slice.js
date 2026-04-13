@@ -6,17 +6,6 @@ const chatSlice = createSlice({
         chats: {},
         currentChatId: null
     },
-
-    /**
-     * users = [{_id:"user-1",username:"abc"},{_id:"user-2",username:"xyz"}]
-     * 
-     * {
-     *  "user-1":{_id:"user-1",username:"abc"},
-     *  "user-2":{_id:"user-2",username:"xyz"}
-     * }
-     * 
-     */
-
     reducers: {
         setChats: (state, action) => {
             const users = action.payload
