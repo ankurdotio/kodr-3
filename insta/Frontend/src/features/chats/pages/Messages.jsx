@@ -62,9 +62,12 @@ const Messages = () => {
 
                     {/* Messages Area */}
                     <div className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
-                        <div className="text-center">
+                        {!currentChatId && <div className="text-center">
                             <p className="text-[#5a6061] text-sm tracking-wide">Select a user from the right to start a conversation</p>
-                        </div>
+                        </div>}
+                        {currentChatId && (
+                            <h1>messages</h1>
+                        )}
                     </div>
 
                     {/* Input Area placeholder */}
