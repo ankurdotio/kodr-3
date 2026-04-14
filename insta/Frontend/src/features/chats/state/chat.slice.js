@@ -20,6 +20,13 @@ const chatSlice = createSlice({
         appendMessage: (state, action) => {
             const { message, receiverId, senderId, currentChatId } = action.payload
 
+            /**
+             * message : hello neha
+             * receiver: neha_js
+             * sender:"ritu_dev"
+             * currentChatId:"ritu_dev"
+             */
+            
             console.log(action.payload)
 
             state.chats[ currentChatId ].messages.push({

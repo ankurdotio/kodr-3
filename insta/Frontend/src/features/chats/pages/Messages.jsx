@@ -8,7 +8,6 @@ import ChatUserTile from '../components/ChatUserTile'
 const URL = 'http://localhost:3000';
 
 
-
 const Messages = () => {
     const { handleGetChatUsers, handleAppendMessage } = useChat()
     const chats = useSelector(store => store.chat.chats)
@@ -16,7 +15,6 @@ const Messages = () => {
     const currentChatId = useSelector(store => store.chat.currentChatId)
     const [ message, setMessage ] = useState("")
     const socketRef = useRef(null)
-
 
 
     function handleSendMessage() {
@@ -50,10 +48,10 @@ const Messages = () => {
 
         socket.on("receive_message", data => {
             handleAppendMessage({
-                message: data.message,
-                receiverId: loggedInUser.id,
-                senderId: data.sender,
-                currentChatId: data.sender
+                message: data.message, // hello neha
+                receiverId: data.receiver, // neha_js
+                senderId: data.sender, // ritu_dev
+                currentChatId: data.sender // ritu_dev 
             })
         })
 
