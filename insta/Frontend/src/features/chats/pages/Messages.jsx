@@ -18,7 +18,6 @@ const Messages = () => {
 
 
 
-
     function handleSendMessage() {
         socketRef.current.emit("send_message", {
             message,
@@ -26,8 +25,11 @@ const Messages = () => {
     }
 
 
+
     useEffect(() => {
-        const socket = io(URL)
+        const socket = io(URL, {
+            withCredentials: true
+        })
         socketRef.current = socket
         handleGetChatUsers()
     }, [])
@@ -76,9 +78,9 @@ const Messages = () => {
             </div>
 
             {/* Users List - Right */}
-            <div className="w-full md:w-[320px] lg:w-[380px] bg-[#f2f4f4] shrink-0 h-[35vh] md:h-full overflow-y-auto p-6 md:p-8 border-l border-[#dde4e5]/30">
+            <div className="w-full md:w-[320px] lg:w-95 bg-[#f2f4f4] shrink-0 h-[35vh] md:h-full overflow-y-auto p-6 md:p-8 border-l border-[#dde4e5]/30">
                 <div className="mb-8 flex items-center justify-between">
-                    <h3 className="text-xs font-bold tracking-[0.1em] text-[#5a6061] uppercase">Conversations</h3>
+                    <h3 className="text-xs font-bold tracking-widest text-[#5a6061] uppercase">Conversations</h3>
                 </div>
                 <div className="flex flex-col space-y-1 mt-2">
                     {chatUsers.length > 0 ? chatUsers.map(user => (

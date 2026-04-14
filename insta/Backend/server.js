@@ -1,30 +1,12 @@
 import app from './src/app.js';
 import connectToDB from './src/config/database.js';
-import { Server } from "socket.io";
 import { createServer } from "http"
+import initSocket from "./src/sockets/app.socket.js"
 
 
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
-    cors: {
-        origin: "http://localhost:5173",
-        methods: [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
-        credentials: true,
-    }
-})
-
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
-
-    socket.on("send_message", data => {
-        console.log(data)
-    })
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
-});
+initSocket(httpServer);
 
 connectToDB()
 
