@@ -1,7 +1,7 @@
 import React from 'react'
 import { useChat } from '../hooks/useChat'
 
-const ChatUserTile = ({ user }) => {
+const ChatUserTile = ({ user, actAs = "tile" }) => {
 
     const { handleSetCurrentChatId } = useChat()
 
@@ -10,7 +10,7 @@ const ChatUserTile = ({ user }) => {
     }
 
     return (
-        <button onClick={() => { handleClick(user._id) }} className="flex items-center p-3 -mx-3 rounded-lg hover:bg-[#dde4e5] transition-colors cursor-pointer group">
+        <button onClick={() => { handleClick(user._id) }} className={"flex items-center p-3 -mx-3 rounded-lg transition-colors cursor-pointer group" + (actAs == "tile" ? " hover:bg-[#dde4e5]" : "")}>
             <div className="relative shrink-0">
                 <img
                     src={user.profilePicture || "https://ik.imagekit.io/hnoglyswo0/avatar-photo-default-user-icon-600nw-2558759027.webp"}
@@ -20,7 +20,7 @@ const ChatUserTile = ({ user }) => {
             </div>
             <div className="ml-4 truncate">
                 <p className="text-sm font-semibold tracking-tight text-[#2d3435] truncate">{user.username}</p>
-                <p className="text-xs text-[#5a6061] mt-0.5 truncate">Tap to view chat</p>
+                {actAs == "tile" && <p className="text-xs text-[#5a6061] mt-0.5 truncate">Tap to view chat</p>}
             </div>
         </button>
     )

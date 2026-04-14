@@ -10,8 +10,9 @@ const URL = 'http://localhost:3000';
 
 
 const Messages = () => {
-    const { handleGetChatUsers } = useChat()
+    const { handleGetChatUsers, handleAppendMessage } = useChat()
     const chats = useSelector(store => store.chat.chats)
+    const loggedInUser = useSelector(store => store.auth.user)
     const currentChatId = useSelector(store => store.chat.currentChatId)
     const [ message, setMessage ] = useState("")
     const socketRef = useRef(null)
@@ -22,6 +23,12 @@ const Messages = () => {
         socketRef.current.emit("send_message", {
             message,
             receiver: currentChatId
+        })
+        handleAppendMessage({
+            message,
+            receiverId: currentChatId,
+            senderId: loggedInUser.id,
+            currentChatId: currentChatId
         })
     }
 
@@ -42,13 +49,26 @@ const Messages = () => {
         })
 
         socket.on("receive_message", data => {
-            console.log(data)
+            handleAppendMessage({
+                message: data.message,
+                receiverId: loggedInUser.id,
+                senderId: data.sender,
+                currentChatId: data.sender
+            })
         })
 
         handleGetChatUsers()
-    }, [])
+
+        return () => {
+            socket.disconnect()
+            socketRef.current = null
+        }
+
+    }, [ loggedInUser ])
 
     const chatUsers = Object.values(chats)
+
+
 
     return (
         <div className="flex flex-col-reverse w-full md:flex-row h-screen bg-[#f9f9f9] text-[#2d3435] font-sans">
@@ -57,16 +77,23 @@ const Messages = () => {
                 <div className="flex-1 bg-[#ffffff] shadow-[0_24px_48px_rgba(0,0,0,0.02)] flex flex-col overflow-hidden">
                     {/* Header */}
                     <div className="px-8 py-6 border-b border-[#f2f4f4]/60">
-                        <h2 className="text-2xl tracking-tight font-medium text-[#2d3435]">Chat</h2>
+                        {!currentChatId && <h2 className="text-2xl tracking-tight font-medium text-[#2d3435]">Chat</h2>}
+                        {currentChatId && <ChatUserTile actAs={"header"} user={chats[ currentChatId ]} />}
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
+                    <div className="flex-1 p-8 overflow-y-auto flex flex-col">
                         {!currentChatId && <div className="text-center">
                             <p className="text-[#5a6061] text-sm tracking-wide">Select a user from the right to start a conversation</p>
                         </div>}
                         {currentChatId && (
-                            <h1>messages</h1>
+                            chats[ currentChatId ].messages.map(message => {
+                                return (
+                                    <div className={"flex items-center h-fit gap-2" + " " + (message.receiver == loggedInUser.id ? "" : "ml-auto")}>
+                                        <p>{message.message}</p>
+                                    </div>
+                                )
+                            })
                         )}
                     </div>
 

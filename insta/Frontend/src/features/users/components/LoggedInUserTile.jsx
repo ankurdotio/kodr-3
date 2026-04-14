@@ -5,8 +5,6 @@ const LoggedInUserTile = () => {
 
     const user = useSelector(state => state.auth.user)
 
-    console.log(user)
-
     if (!user) {
         return null
     }
