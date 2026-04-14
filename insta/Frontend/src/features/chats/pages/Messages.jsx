@@ -21,6 +21,7 @@ const Messages = () => {
     function handleSendMessage() {
         socketRef.current.emit("send_message", {
             message,
+            receiver: currentChatId
         })
     }
 
@@ -31,6 +32,19 @@ const Messages = () => {
             withCredentials: true
         })
         socketRef.current = socket
+
+        socket.once("connect", () => {
+            console.log("Connected to socket")
+        })
+
+        socket.on("connect_error", (data) => {
+            console.log(data)
+        })
+
+        socket.on("receive_message", data => {
+            console.log(data)
+        })
+
         handleGetChatUsers()
     }, [])
 
