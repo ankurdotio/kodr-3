@@ -8,14 +8,13 @@ import chatRouter from './routes/chat.routes.js';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import { config } from './config/config.js';
-import cors from 'cors';
 
 
 const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(express.static("public"))
 
 app.use(passport.initialize());
 
@@ -32,5 +31,13 @@ app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
+
+
+app.get("*name", (req, res) => {
+
+    console.log(req.params.name)
+
+    res.sendFile("index.html", { root: "public" });
+})
 
 export default app;
