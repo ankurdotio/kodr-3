@@ -8,6 +8,7 @@ import AppLayout from "../components/layouts/AppLayout"
 import Search from "../features/users/pages/Search"
 import Notification from "../features/users/pages/Notification"
 import Messages from "../features/chats/pages/Messages"
+import NotFound from "../features/shared/pages/NotFound"
 
 
 export const router = createBrowserRouter([
@@ -47,5 +48,9 @@ export const router = createBrowserRouter([
                 element: <Messages />
             }
         ]
+    },
+    {
+        path: "*",
+        element: <NotFound />
     }
 ])
