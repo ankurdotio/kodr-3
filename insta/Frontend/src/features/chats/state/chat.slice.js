@@ -26,7 +26,7 @@ const chatSlice = createSlice({
              * sender:"ritu_dev"
              * currentChatId:"ritu_dev"
              */
-            
+
             console.log(action.payload)
 
             state.chats[ currentChatId ].messages.push({
@@ -34,12 +34,16 @@ const chatSlice = createSlice({
                 receiver: receiverId,
                 sender: senderId
             })
+        },
+        setMessages: (state, action) => {
+            const { messages, userId } = action.payload
+            state.chats[ userId ].messages = messages
         }
     }
 })
 
 
-export const { setChats, setCurrentChatId, appendMessage } = chatSlice.actions
+export const { setChats, setCurrentChatId, appendMessage,setMessages } = chatSlice.actions
 export default chatSlice.reducer
 
 // const chats = {

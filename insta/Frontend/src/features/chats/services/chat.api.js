@@ -10,3 +10,11 @@ export const getChatUsers = async () => {
     return response.data
 
 }
+
+
+export const getChatMessages = async (userId) => {
+    const response = await axios.get("http://localhost:3000/api/chats/messages/" + userId, {
+        withCredentials: true
+    })
+    return response.data
+}
