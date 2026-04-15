@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import followModel from "../models/follow.model.js";
+import ChatMessageModel from "../models/message.model.js";
 
 
 export const getUsers = async (req, res) => {
@@ -73,6 +74,50 @@ export const getUsers = async (req, res) => {
         message: "Users fetched successfully",
         success: true,
         users
+    })
+
+}
+
+export const getMessages = async (req, res) => {
+
+    const canChat = await followModel.findOne({
+        $or: [
+            {
+                follower: req.user.id,
+                followee: req.params.userId,
+            },
+            {
+                followee: req.user.id,
+                follower: req.params.userId,
+            }
+        ],
+        status: "accepted",
+    })
+
+    if (!canChat) {
+        return res.status(403).json({
+            message: "You are not allowed to chat with this user",
+            success: false,
+        })
+    }
+
+    const messages = await ChatMessageModel.find({
+        $or: [
+            {
+                sender: req.user.id,
+                receiver: req.params.userId
+            },
+            {
+                receiver: req.user.id,
+                sender: req.params.userId
+            }
+        ]
+    })
+
+    return res.status(200).json({
+        message: "Messages fetched successfully",
+        success: true,
+        messages,
     })
 
 }

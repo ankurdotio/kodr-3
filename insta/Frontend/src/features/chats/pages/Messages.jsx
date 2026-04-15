@@ -5,6 +5,9 @@ import { io } from 'socket.io-client';
 import ChatUserTile from '../components/ChatUserTile'
 
 
+// Mark: Virtualization
+
+
 const URL = 'http://localhost:3000';
 
 
@@ -29,6 +32,8 @@ const Messages = () => {
             currentChatId: currentChatId
         })
     }
+
+    const currentChat = chats[ currentChatId ]
 
 
 
@@ -85,10 +90,12 @@ const Messages = () => {
                             <p className="text-[#5a6061] text-sm tracking-wide">Select a user from the right to start a conversation</p>
                         </div>}
                         {currentChatId && (
-                            chats[ currentChatId ].messages.map(message => {
+                            currentChat.messages.map(message => {
                                 return (
-                                    <div className={"flex items-center h-fit gap-2" + " " + (message.receiver == loggedInUser.id ? "" : "ml-auto")}>
-                                        <p>{message.message}</p>
+                                    <div className={"flex items-center h-fit gap-2" + " " + (message.sender == loggedInUser.id ? "ml-auto" : "")}>
+                                        <div className={"p-2 px-6 rounded-2xl bg-neutral-200" + " " + (message.sender == loggedInUser.id ? "rounded-br-none" : "rounded-bl-none")}>
+                                            <p>{message.message}</p>
+                                        </div>
                                     </div>
                                 )
                             })

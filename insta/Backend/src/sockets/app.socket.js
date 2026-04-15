@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
 import { config } from "../config/config.js";
-
+import ChatMessageModel from "../models/message.model.js";
 
 export default function (httpServer) {
 
@@ -17,10 +17,10 @@ export default function (httpServer) {
     io.use((socket, next) => {
         const cookie = socket.handshake.headers.cookie;
 
-        if(!cookie) {
+        if (!cookie) {
             return next(new Error('Authentication error: No token provided'));
         }
-        
+
         const token = parse(cookie).token
 
         try {
@@ -38,11 +38,17 @@ export default function (httpServer) {
 
         socket.join(socket.user.id)
 
-        socket.on("send_message", data => {
+        socket.on("send_message", async data => {
             const { message, receiver } = data
             io.to(receiver).emit("receive_message", {
                 message,
                 sender: socket.user.id,
+            })
+
+            await ChatMessageModel.create({
+                message,
+                sender: socket.user.id,
+                receiver,
             })
         })
 
