@@ -2,7 +2,7 @@ import axios from "axios"
 
 export async function searchUser({ query }) {
 
-    const response = await axios.get("http://localhost:3000/api/users/search?q=" + query, {
+    const response = await axios.get("/api/users/search?q=" + query, {
         withCredentials: true
     })
     return response.data
@@ -11,7 +11,7 @@ export async function searchUser({ query }) {
 
 export async function followUser({ userId }) {
 
-    const response = await axios.post("http://localhost:3000/api/users/follow/" + userId, {}, {
+    const response = await axios.post("/api/users/follow/" + userId, {}, {
         withCredentials: true
     })
 
@@ -22,7 +22,7 @@ export async function followUser({ userId }) {
 
 export async function getFollowRequests() {
 
-    const response = await axios.get("http://localhost:3000/api/users/follow-requests", {
+    const response = await axios.get("/api/users/follow-requests", {
         withCredentials: true
     })
 
@@ -31,7 +31,7 @@ export async function getFollowRequests() {
 }
 
 export async function acceptFollowRequest({ requestId }) {
-    const response = await axios.patch("http://localhost:3000/api/users/follow-requests/" + requestId, {}, {
+    const response = await axios.patch("/api/users/follow-requests/" + requestId, {}, {
         withCredentials: true
     })
 
@@ -39,7 +39,7 @@ export async function acceptFollowRequest({ requestId }) {
 }
 
 export async function getProfileData() {
-    const response = await axios.get("http://localhost:3000/api/users/profile", { withCredentials: true })
+    const response = await axios.get("/api/users/profile", { withCredentials: true })
 
     return response.data
 }

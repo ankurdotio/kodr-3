@@ -8,7 +8,7 @@ import ChatUserTile from '../components/ChatUserTile'
 // Mark: Virtualization
 
 
-const URL = 'http://localhost:3000';
+
 
 
 const Messages = () => {
@@ -38,7 +38,7 @@ const Messages = () => {
 
 
     useEffect(() => {
-        const socket = io(URL, {
+        const socket = io("/socket.io", {
             withCredentials: true
         })
         socketRef.current = socket

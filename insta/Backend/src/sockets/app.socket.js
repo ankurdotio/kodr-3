@@ -6,13 +6,7 @@ import ChatMessageModel from "../models/message.model.js";
 
 export default function (httpServer) {
 
-    const io = new Server(httpServer, {
-        cors: {
-            origin: "http://localhost:5173",
-            methods: [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
-            credentials: true,
-        }
-    })
+    const io = new Server(httpServer, {})
 
     io.use((socket, next) => {
         const cookie = socket.handshake.headers.cookie;
