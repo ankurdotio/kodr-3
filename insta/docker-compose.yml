@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: ./Backend
+    ports:
+      - "8080:3000"
+    volumes:
+      - ./Backend:/app
+      - chacha:/app/node_modules
+    command: npm run dev
+
+
+volumes:
+  chacha:

@@ -27,6 +27,10 @@ passport.use(new GoogleStrategy({
 }))
 
 
+app.get("/health", () => { 
+    res.status(200).json({ message: "Server is healthy" });
+})
+
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
