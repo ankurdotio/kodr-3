@@ -14,7 +14,7 @@ import LoggedInUserTile from '../../features/users/components/LoggedInUserTile';
 const Sidebar = () => {
 
     const navItems = [
-        { name: 'Home', path: '/', icon: Home },
+        { name: 'Dashboard', path: '/', icon: Home },
         { name: 'Search', path: '/search', icon: Search },
         { name: 'Messages', path: '/messages', icon: MessageCircle },
         { name: 'Notifications', path: '/notifications', icon: Bell },
