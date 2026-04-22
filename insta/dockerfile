@@ -1,0 +1,27 @@
+#Stage 1: Build the frontend
+FROM node:20 AS frontend_builder
+WORKDIR /app
+
+COPY ./Frontend/package*.json /app
+
+RUN npm install
+
+COPY ./Frontend /app
+
+RUN npm run build
+# create an dist /app/dist
+
+#Stage 2: Final Stage
+FROM node:20
+
+WORKDIR /app
+
+COPY ./Backend/package*.json /app
+
+RUN npm install
+
+COPY ./Backend /app
+
+COPY --from=frontend_builder /app/dist /app/public
+
+CMD ["node","server.js"]

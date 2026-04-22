@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AWS ECS Deployment — Sheryians Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #f97316;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  header span {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: auto;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 56px;
+    padding: 40px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(135deg, #111118 60%, #1a0f2e);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(249,115,22,0.12), transparent 70%);
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h2 {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .hero h2 span { color: var(--accent); }
+  .hero p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 580px;
+  }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 56px;
+    overflow-x: auto;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    flex: 1;
+  }
+  .flow-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    border: 1px solid;
+  }
+  .flow-label {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    text-align: center;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: var(--border);
+    flex-shrink: 0;
+    padding: 0 6px;
+    margin-bottom: 20px;
+  }
+  .c-orange { background: rgba(249,115,22,.1); border-color: rgba(249,115,22,.3); color: var(--accent); }
+  .c-blue   { background: rgba(56,189,248,.1); border-color: rgba(56,189,248,.3); color: var(--accent2); }
+  .c-purple { background: rgba(167,139,250,.1); border-color: rgba(167,139,250,.3); color: var(--accent3); }
+  .c-green  { background: rgba(74,222,128,.1); border-color: rgba(74,222,128,.3); color: var(--green); }
+  .c-yellow { background: rgba(251,191,36,.1); border-color: rgba(251,191,36,.3); color: var(--yellow); }
+  .c-red    { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.3); color: var(--red); }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .section-head {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-head:hover { background: #16161f; }
+  .s-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 28px;
+  }
+  .s-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .s-title {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .s-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .section-body {
+    padding: 28px;
+    background: var(--bg);
+  }
+
+  /* ── CONTENT ELEMENTS ── */
+  .def {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-left: 16px;
+    border-left: 3px solid var(--accent);
+    line-height: 1.8;
+  }
+  .analogy {
+    background: #0f1a0f;
+    border: 1px solid rgba(74,222,128,.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--green);
+    display: flex;
+    gap: 12px;
+  }
+  .analogy-icon { font-size: 18px; flex-shrink: 0; }
+  .tip {
+    background: #1a140f;
+    border: 1px solid rgba(251,191,36,.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--yellow);
+    display: flex;
+    gap: 12px;
+  }
+  .note {
+    background: #0f1520;
+    border: 1px solid rgba(56,189,248,.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--accent2);
+    display: flex;
+    gap: 12px;
+  }
+
+  ul.points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  ul.points li {
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  ul.points li::before {
+    content: '→';
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+
+  /* ── MINI TABLE ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .compare-card {
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .compare-card h4 {
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .compare-card p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── STEP FLOW ── */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+  .step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+  .step-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 20px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+  .step:last-child .step-connector { display: none; }
+  .step-content {
+    padding-bottom: 20px;
+    flex: 1;
+  }
+  .step-content h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
+  .step-content p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0d0d14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #a0a0c0;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .code-block .kw { color: var(--accent); }
+  .code-block .cm { color: var(--muted); font-style: italic; }
+  .code-block .val { color: var(--green); }
+
+  /* ── SUMMARY CARD ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+  .summary-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: var(--surface);
+    text-align: center;
+  }
+  .summary-card .s-icon-sm { font-size: 24px; margin-bottom: 8px; }
+  .summary-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .summary-card p { font-size: 12px; color: var(--muted); }
+  
+  h3.sub {
+    font-size: 14px;
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Sheryians</div>
+  <h1>AWS ECS Deployment</h1>
+  <span>Docker → Cloud // Student Notes</span>
+</header>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">// Module: AWS for Developers</div>
+    <h2>Deploy Docker Images<br><span>on AWS ECS</span></h2>
+    <p>Everything you need to understand AWS infra — from what it is to deploying your container live. Short, simple, no fluff.</p>
+  </div>
+
+  <!-- DEPLOYMENT FLOW -->
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-icon c-orange">🐳</div>
+      <div class="flow-label">Docker<br>Image</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-icon c-blue">📦</div>
+      <div class="flow-label">ECR<br>Registry</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-icon c-purple">⚙️</div>
+      <div class="flow-label">ECS<br>Task Def</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-icon c-green">🚀</div>
+      <div class="flow-label">ECS<br>Service</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-icon c-yellow">🔀</div>
+      <div class="flow-label">ALB<br>Load Balancer</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-icon c-red">🌐</div>
+      <div class="flow-label">Public<br>Internet</div>
+    </div>
+  </div>
+
+  <!-- 1. AWS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">01</span>
+      <div class="s-icon c-orange">☁️</div>
+      <span class="s-title">What is AWS?</span>
+      <span class="s-badge c-orange">Foundation</span>
+    </div>
+    <div class="section-body">
+      <p class="def">AWS (Amazon Web Services) is a cloud platform by Amazon. Instead of buying servers, you <strong>rent</strong> them from AWS — pay only for what you use.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Think of it like this:</strong> Zomato rents a commercial kitchen instead of building one. You rent servers from AWS instead of buying one.</div>
+      </div>
+      <h3 class="sub">Why use AWS?</h3>
+      <ul class="points">
+        <li>No upfront hardware cost</li>
+        <li>Scale up/down anytime</li>
+        <li>Servers run 24/7 without you managing them physically</li>
+        <li>Global — deploy in any country with one click</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2. ECR -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">02</span>
+      <div class="s-icon c-blue">📦</div>
+      <span class="s-title">ECR — Elastic Container Registry</span>
+      <span class="s-badge c-blue">Storage</span>
+    </div>
+    <div class="section-body">
+      <p class="def">ECR is like <strong>Docker Hub</strong>, but private and inside AWS. You push your Docker image here, and ECS pulls it from here to run your container.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> ECR is a private locker inside AWS where you store your Docker images. Only your AWS account can access it.</div>
+      </div>
+      <h3 class="sub">Basic Flow</h3>
+      <div class="code-block">
+<span class="cm"># Step 1 — Login to ECR</span>
+<span class="kw">aws ecr</span> get-login-password | docker login --username AWS --password-stdin <span class="val">YOUR_ECR_URL</span>
+
+<span class="cm"># Step 2 — Tag your image</span>
+<span class="kw">docker tag</span> myapp:latest <span class="val">YOUR_ECR_URL/myapp:latest</span>
+
+<span class="cm"># Step 3 — Push to ECR</span>
+<span class="kw">docker push</span> <span class="val">YOUR_ECR_URL/myapp:latest</span>
+      </div>
+      <div class="tip">
+        <span>⚡</span>
+        <div><strong>Key point:</strong> ECR is private. ECS already has permission to pull from it — no Docker Hub needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ECS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">03</span>
+      <div class="s-icon c-purple">⚙️</div>
+      <span class="s-title">ECS — Elastic Container Service</span>
+      <span class="s-badge c-purple">Core</span>
+    </div>
+    <div class="section-body">
+      <p class="def">ECS is AWS's service to <strong>run Docker containers</strong>. You tell it what image to run, how much CPU/RAM to give it — ECS handles the rest.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> ECS is like a container manager at a factory. You give it a blueprint (Task Definition) and it runs containers for you automatically.</div>
+      </div>
+      <h3 class="sub">3 Key ECS Concepts</h3>
+      <ul class="points">
+        <li><strong>Cluster</strong> — The group/environment where your containers run. Like a "project folder" in ECS.</li>
+        <li><strong>Task Definition</strong> — The blueprint. Which image? How much CPU/RAM? Which port? Environment variables?</li>
+        <li><strong>Service</strong> — Keeps your tasks running. If a container dies, it auto-restarts it. Also integrates with Load Balancer.</li>
+      </ul>
+      <h3 class="sub">ECS Launch Types</h3>
+      <div class="compare">
+        <div class="compare-card" style="border-color: rgba(167,139,250,.3); background: rgba(167,139,250,.05);">
+          <h4 style="color: var(--accent3)">🖥️ EC2 Launch Type</h4>
+          <p>You manage the servers (EC2 instances). More control, more work. Good for GPU or custom setups.</p>
+        </div>
+        <div class="compare-card" style="border-color: rgba(56,189,248,.3); background: rgba(56,189,248,.05);">
+          <h4 style="color: var(--accent2)">☁️ Fargate (Recommended)</h4>
+          <p>Serverless. AWS manages servers for you. You only define CPU/RAM. <strong>Best for beginners.</strong></p>
+        </div>
+      </div>
+      <div class="tip">
+        <span>⚡</span>
+        <div>For most web apps, <strong>use Fargate</strong>. You don't have to manage any EC2 instances.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. VPC -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">04</span>
+      <div class="s-icon c-green">🔒</div>
+      <span class="s-title">VPC — Virtual Private Cloud</span>
+      <span class="s-badge c-green">Networking</span>
+    </div>
+    <div class="section-body">
+      <p class="def">VPC is your <strong>private network inside AWS</strong>. All your AWS resources (ECS, RDS, EC2) live inside a VPC. It isolates your infra from others.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> VPC is like a gated society. Your servers are flats inside. Security Group is the guard at the gate who decides who can enter.</div>
+      </div>
+      <h3 class="sub">Subnets inside VPC</h3>
+      <div class="compare">
+        <div class="compare-card" style="border-color: rgba(74,222,128,.3); background: rgba(74,222,128,.05);">
+          <h4 style="color: var(--green)">🌐 Public Subnet</h4>
+          <p>Has internet access. Load balancer lives here. Users can reach it.</p>
+        </div>
+        <div class="compare-card" style="border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.05);">
+          <h4 style="color: var(--red)">🔐 Private Subnet</h4>
+          <p>No direct internet access. Your ECS containers and DB live here. Safer.</p>
+        </div>
+      </div>
+      <div class="note">
+        <span>📌</span>
+        <div>AWS gives you a <strong>default VPC</strong> in every region. For most projects, you can use it without creating a new one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Security Group -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">05</span>
+      <div class="s-icon c-red">🛡️</div>
+      <span class="s-title">Security Group</span>
+      <span class="s-badge c-red">Firewall</span>
+    </div>
+    <div class="section-body">
+      <p class="def">Security Group is a <strong>virtual firewall</strong> that controls which traffic is allowed IN (inbound) and OUT (outbound) of your resource.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> It's the bouncer at a club. You write rules: "Allow HTTP on port 80", "Allow only from this IP". Everything else is blocked by default.</div>
+      </div>
+      <h3 class="sub">Common Rules You'll Set</h3>
+      <ul class="points">
+        <li><strong>ALB Security Group</strong> → Allow inbound HTTP (80) and HTTPS (443) from anywhere (0.0.0.0/0)</li>
+        <li><strong>ECS Task Security Group</strong> → Allow inbound only from ALB's Security Group on your app port (e.g., 3000)</li>
+        <li><strong>RDS Security Group</strong> → Allow inbound only from ECS Security Group on port 5432 / 3306</li>
+      </ul>
+      <div class="tip">
+        <span>⚡</span>
+        <div><strong>Key rule:</strong> Never expose your ECS task or database directly to the internet. Let traffic come through ALB only.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Target Group -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">06</span>
+      <div class="s-icon c-yellow">🎯</div>
+      <span class="s-title">Target Group</span>
+      <span class="s-badge c-yellow">Routing</span>
+    </div>
+    <div class="section-body">
+      <p class="def">Target Group is the <strong>list of containers/servers</strong> that the Load Balancer sends traffic to. It also does health checks to make sure the container is alive.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> ALB is the receptionist. Target Group is the list of employees (containers) the receptionist can forward calls to. Health check = "Is this employee available?"</div>
+      </div>
+      <h3 class="sub">What to configure</h3>
+      <ul class="points">
+        <li><strong>Target type:</strong> IP (for Fargate tasks)</li>
+        <li><strong>Protocol:</strong> HTTP</li>
+        <li><strong>Port:</strong> Your app port (e.g., 3000)</li>
+        <li><strong>Health check path:</strong> <code style="font-family:monospace; color:var(--accent)">/</code> or <code style="font-family:monospace; color:var(--accent)">/health</code> — ALB pings this to check if container is alive</li>
+      </ul>
+      <div class="note">
+        <span>📌</span>
+        <div>ECS Service automatically registers/deregisters tasks in the Target Group when containers start or stop.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. ALB -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">07</span>
+      <div class="s-icon c-orange">🔀</div>
+      <span class="s-title">ALB — Application Load Balancer</span>
+      <span class="s-badge c-orange">Traffic</span>
+    </div>
+    <div class="section-body">
+      <p class="def">ALB sits in front of your containers and <strong>distributes incoming traffic</strong> across all running ECS tasks. It's also the single public-facing entry point.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> You have 3 Zomato delivery guys (containers). ALB is the dispatcher who fairly assigns orders (requests) to whichever guy is free.</div>
+      </div>
+      <h3 class="sub">What ALB can do</h3>
+      <ul class="points">
+        <li>Distribute traffic across multiple containers</li>
+        <li>Route <code style="font-family:monospace; color:var(--accent)">/api/*</code> to backend, <code style="font-family:monospace; color:var(--accent)">/</code> to frontend (path-based routing)</li>
+        <li>Handle SSL/HTTPS termination (attach an SSL cert)</li>
+        <li>Stop sending traffic to unhealthy containers (via Target Group health checks)</li>
+      </ul>
+      <div class="tip">
+        <span>⚡</span>
+        <div>ALB gives you a public DNS URL. Map your custom domain to this URL using Route 53 or any DNS provider.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. IAM -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">08</span>
+      <div class="s-icon c-purple">🔑</div>
+      <span class="s-title">IAM — Identity and Access Management</span>
+      <span class="s-badge c-purple">Permissions</span>
+    </div>
+    <div class="section-body">
+      <p class="def">IAM controls <strong>who can do what</strong> in your AWS account. Every service (ECS, EC2, etc.) needs IAM roles to talk to each other.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> IAM is the HR department. It gives each employee (service) an ID card with specific permissions. ECS needs an IAM role to pull images from ECR.</div>
+      </div>
+      <h3 class="sub">Key Roles You'll Create</h3>
+      <ul class="points">
+        <li><strong>ecsTaskExecutionRole</strong> — Allows ECS to pull images from ECR and send logs to CloudWatch</li>
+        <li><strong>ecsTaskRole</strong> (optional) — Gives your running container permission to call other AWS services (like S3)</li>
+      </ul>
+      <div class="note">
+        <span>📌</span>
+        <div>If your container can't start, 90% of the time it's a wrong IAM role or missing permission. Always attach <strong>AmazonECSTaskExecutionRolePolicy</strong> to your task execution role.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. CloudWatch -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">09</span>
+      <div class="s-icon c-blue">📊</div>
+      <span class="s-title">CloudWatch — Logs & Monitoring</span>
+      <span class="s-badge c-blue">Observability</span>
+    </div>
+    <div class="section-body">
+      <p class="def">CloudWatch collects <strong>logs and metrics</strong> from your AWS services. When your ECS task crashes, you check CloudWatch to see why.</p>
+      <div class="analogy">
+        <span class="analogy-icon">💡</span>
+        <div><strong>Analogy:</strong> It's the CCTV + activity log of your AWS setup. Every <code>console.log</code> from your container shows up here.</div>
+      </div>
+      <ul class="points">
+        <li>In Task Definition, set log driver to <strong>awslogs</strong> to enable container logging</li>
+        <li>Go to CloudWatch → Log Groups → <code style="font-family:monospace; color:var(--accent)">/ecs/your-app-name</code> to see logs</li>
+        <li>Set alarms on CPU/memory usage to get notified before things break</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 10. Full Deployment Steps -->
+  <div class="section">
+    <div class="section-head">
+      <span class="s-num">10</span>
+      <div class="s-icon c-green">🚀</div>
+      <span class="s-title">Full Deployment — Step by Step</span>
+      <span class="s-badge c-green">Practice</span>
+    </div>
+    <div class="section-body">
+      <p class="def" style="margin-bottom: 24px;">Here's the exact order of steps when deploying a Docker app to ECS for the first time.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-orange">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create ECR Repository</h4>
+            <p>Go to AWS ECR → Create repository → Push your Docker image using the push commands provided.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-blue">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create ECS Cluster</h4>
+            <p>Go to ECS → Clusters → Create Cluster. Choose Fargate. This is your working environment.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-purple">3</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create Task Definition</h4>
+            <p>Set your ECR image URL, CPU/RAM (e.g., 0.5 vCPU, 1GB), app port, environment variables, and IAM execution role.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-yellow">4</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create Target Group</h4>
+            <p>EC2 → Target Groups → Create. Type: IP, Port: your app port, Health check: /health or /</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-red">5</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create Application Load Balancer</h4>
+            <p>EC2 → Load Balancers → Create ALB. Attach it to public subnets. Create listener on port 80, forward to your Target Group.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot c-green">6</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h4>Create ECS Service</h4>
+            <p>In your Cluster → Create Service. Choose your Task Definition, set desired task count, attach the ALB + Target Group, set Security Groups.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-dot" style="background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);color:var(--accent3);">7</div>
+          </div>
+          <div class="step-content">
+            <h4>Test via ALB DNS</h4>
+            <p>Copy the ALB DNS name → paste in browser. Your app should be live. Point your domain to ALB DNS using CNAME.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="s-icon-sm">☁️</div>
+      <h4>AWS</h4>
+      <p>Cloud platform. Rent servers, pay as you go.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">📦</div>
+      <h4>ECR</h4>
+      <p>Private Docker Hub inside AWS.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">⚙️</div>
+      <h4>ECS</h4>
+      <p>Runs your Docker containers in the cloud.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">🔒</div>
+      <h4>VPC</h4>
+      <p>Your private network in AWS.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">🛡️</div>
+      <h4>Security Group</h4>
+      <p>Firewall rules for each resource.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">🎯</div>
+      <h4>Target Group</h4>
+      <p>List of containers ALB sends traffic to.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">🔀</div>
+      <h4>ALB</h4>
+      <p>Distributes traffic to your containers.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">🔑</div>
+      <h4>IAM</h4>
+      <p>Permissions for AWS services.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-icon-sm">📊</div>
+      <h4>CloudWatch</h4>
+      <p>Logs and monitoring for your app.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
