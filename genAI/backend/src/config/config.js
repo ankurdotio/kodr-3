@@ -12,9 +12,21 @@ if (!process.env.MONGO_URI) {
     process.exit(1);
 }
 
+if (!process.env.GOOGLE_CLIENT_ID) {
+    console.error("GOOGLE_CLIENT_ID is not defined in environment variables");
+    process.exit(1);
+}
+
+if (!process.env.GOOGLE_CLIENT_SECRET) {
+    console.error("GOOGLE_CLIENT_SECRET is not defined in environment variables");
+    process.exit(1);
+}
+
 const _config = {
     JWT_SECRET: process.env.JWT_SECRET,
     MONGO_URI: process.env.MONGO_URI,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 }
 
 export default Object.freeze(_config);
