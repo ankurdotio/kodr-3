@@ -22,11 +22,18 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
     process.exit(1);
 }
 
+if (!process.env.MISTRAL_API_KEY) {
+    console.error("MISTRAL_API_KEY is not defined in environment variables");
+    process.exit(1);
+}
+
+
 const _config = {
     JWT_SECRET: process.env.JWT_SECRET,
     MONGO_URI: process.env.MONGO_URI,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
 }
 
 export default Object.freeze(_config);
