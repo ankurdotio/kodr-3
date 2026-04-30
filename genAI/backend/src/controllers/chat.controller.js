@@ -27,7 +27,7 @@ export async function handleMessage(req, res) {
 
         for await (const chunk of stream) {
             AIMessage += chunk[ 0 ].contentBlocks[ 0 ].text;
-            res.write(`data: ${chunk[ 0 ].contentBlocks[ 0 ].text}\n\n`);
+            res.write(`data: ${JSON.stringify({ text: chunk[ 0 ].contentBlocks[ 0 ].text })}\n\n`);
         }
 
         return AIMessage
@@ -35,6 +35,6 @@ export async function handleMessage(req, res) {
 
     const [ chat, AIMessage ] = await Promise.all([ generateTitle(), aiStream() ])
 
-    res.write(`data: [DONE]\n\n`);
+    // res.write(`data: [DONE]\n\n`);
     res.end()
 }
