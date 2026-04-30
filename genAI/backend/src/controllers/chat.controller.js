@@ -1,5 +1,5 @@
 import * as chatDao from "../dao/chat.dao.js";
-import { getAIResponse } from "../services/ai.service.js";
+import { getAIResponse, getTitle } from "../services/ai.service.js";
 
 
 export async function handleMessage(req, res) {
@@ -9,11 +9,14 @@ export async function handleMessage(req, res) {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
+
+    if (!chatId) {
+        const data = await getTitle({ message: content })
+    }
+
     const stream = await getAIResponse({ content });
 
     for await (const chunk of stream) {
-        console.log(chunk[ 0 ].contentBlocks)
-
         res.write(`data: ${chunk[ 0 ].contentBlocks[ 0 ].text}\n\n`);
     }
 
