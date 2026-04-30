@@ -10,15 +10,30 @@ export async function handleMessage(req, res) {
     res.setHeader("Connection", "keep-alive");
 
 
-    if (!chatId) {
-        const data = await getTitle({ message: content })
+    const generateTitle = async () => {
+        if (!chatId) {
+            const data = await getTitle({ message: content })
+            const chat = await chatDao.createChat({ title: data.chatTitle, user: req.user.id })
+            res.write(`title: ${JSON.stringify({ title: data.chatTitle, chatId: chat._id })}\n\n`)
+            return chat
+        }
+        return null
     }
 
-    const stream = await getAIResponse({ content });
+    const aiStream = async () => {
+        const stream = await getAIResponse({ content });
 
-    for await (const chunk of stream) {
-        res.write(`data: ${chunk[ 0 ].contentBlocks[ 0 ].text}\n\n`);
+        let AIMessage = ""
+
+        for await (const chunk of stream) {
+            AIMessage += chunk[ 0 ].contentBlocks[ 0 ].text;
+            res.write(`data: ${chunk[ 0 ].contentBlocks[ 0 ].text}\n\n`);
+        }
+
+        return AIMessage
     }
+
+    const [ chat, AIMessage ] = await Promise.all([ generateTitle(), aiStream() ])
 
     res.write(`data: [DONE]\n\n`);
     res.end()

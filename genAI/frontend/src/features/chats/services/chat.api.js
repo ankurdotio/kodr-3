@@ -7,6 +7,7 @@ export async function getAiResponse({ message, chatId }) {
         headers: {
             "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
             content: message, chatId
         })
