@@ -22,9 +22,6 @@ export const chatSlice = createSlice({
             state.chats[ chatId ].messages.push({ role, message: { role, content } })
         },
         appendTempMessage: (state, action) => {
-
-            console.log(action.payload)
-
             state.tempMessages.push({
                 role: action.payload.role,
                 content: action.payload.content,

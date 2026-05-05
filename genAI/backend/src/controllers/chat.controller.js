@@ -35,6 +35,5 @@ export async function handleMessage(req, res) {
 
     const [ chat, AIMessage ] = await Promise.all([ generateTitle(), aiStream() ])
 
-    // res.write(`data: [DONE]\n\n`);
     res.end()
 }
