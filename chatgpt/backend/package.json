@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/google-genai": "^2.1.30",
     "@langchain/mistralai": "^1.0.8",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",

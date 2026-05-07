@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import { generateResponse } from './service/ai.service.js';
+import chatRoutes from './routes/chat.routes.js';
 
 
 const app = express();
@@ -16,26 +16,7 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 })
 
-const messages = []
-
-app.post("/chat", async (req, res) => {
-
-    const userInput = req.body.message;
-
-    messages.push({
-        role: "user",
-        content: userInput
-    })
-
-    const content = await generateResponse(messages);
-
-    messages.push({
-        role: "assistant",
-        content
-    })
-
-    res.json({ content });
-})
+app.use("/api/chat", chatRoutes)
 
 
 export default app;
