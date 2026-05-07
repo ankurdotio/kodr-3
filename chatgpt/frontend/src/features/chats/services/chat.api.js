@@ -7,6 +7,8 @@ export async function sendMessage(message) {
         body: JSON.stringify({ message })
     })
 
+    console.log(response)
+
     const decoder = new TextDecoder()
 
     for await (const chunk of response.body) {

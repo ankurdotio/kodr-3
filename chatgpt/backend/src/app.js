@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import chatRoutes from './routes/chat.routes.js';
 
-
+    
 const app = express();
 
 app.use(morgan('dev'));
