@@ -1,24 +1,16 @@
 import { useState } from 'react'
-import { sendMessage } from '../features/chats/services/chat.api'
 import './App.css'
+import { RouterProvider } from 'react-router'
+import { router } from './app.routes'
+import { Provider } from 'react-redux'
+import { store } from './app.store'
 
 function App() {
-  const [ message, setMessage ] = useState('')
-
-  const handleSendMessage = async () => {
-    await sendMessage(message)
-  }
 
   return (
-    <><h1>Chat GPT</h1>
-      <input
-        type="text"
-        placeholder='Enter Message'
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={handleSendMessage}>Send</button>
-    </>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   )
 }
 
