@@ -3,7 +3,7 @@ import k8sCoreApi from "./config.js";
 export async function createService(sandboxId) {
     const serviceManifest = {
         metadata: {
-            name: `${sandboxId}-sandbox-service`,
+            name: `sandbox-service-${sandboxId}`,
             labels: {
                 sandboxId: sandboxId
             }
