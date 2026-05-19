@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  sandbox-server-deployment
+  labels:
+    name:  sandbox-server-deployment
+spec:
+  selector:
+    matchLabels:
+      app:  sandbox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  sandbox
+    spec:
+      containers:
+      - image:  sandbox-server
+        name:  main-sandbox-server
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10    
+        ports:
+        - containerPort:  3000
+          name:  http
