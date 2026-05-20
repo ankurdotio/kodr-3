@@ -11,7 +11,7 @@ export async function createPod(sandboxId) {
         spec: {
             containers: [
                 {
-                    image: "template:latest",
+                    image: "template:v2",
                     name: "sandbox-container",
                     ports: [ { containerPort: 5173, protocol: "TCP", name: "sandbox-port" } ],
                     resources: {

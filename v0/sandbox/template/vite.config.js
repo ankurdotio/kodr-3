@@ -8,9 +8,13 @@ export default defineConfig({
   host: '0.0.0.0',
   server: {
     allowedHosts: true,
+    port: 5173,
     watch: {
       usePolling: true,
       interval: 300
+    },
+    hmr: {
+      clientPort: 5173
     }
   }
 })
