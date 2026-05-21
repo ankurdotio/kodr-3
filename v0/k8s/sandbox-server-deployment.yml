@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: resource-manager
       containers:
-      - image:  sandbox-server:v2
+      - image:  sandbox-server:v3
         name:  main-sandbox-server
         resources:
           requests:
@@ -36,7 +36,13 @@ spec:
             path: /_status/healthz
             port: 3000
           initialDelaySeconds: 20
-          timeoutSeconds: 10    
+          timeoutSeconds: 10   
+        env:
+          - name:  REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: database
+                key: REDIS_URL
         ports:
         - containerPort:  3000
           name:  http

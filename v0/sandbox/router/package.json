@@ -13,10 +13,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "http-proxy-middleware": "^4.0.0",
     "httpx": "^3.0.1",
     "httpxy": "^0.5.2",
+    "ioredis": "^5.10.1",
     "morgan": "^1.10.1"
   },
   "devDependencies": {
