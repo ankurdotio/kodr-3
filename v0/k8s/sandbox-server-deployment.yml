@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: resource-manager
       containers:
-      - image:  sandbox-server:v3
+      - image:  sandbox
         name:  main-sandbox-server
         resources:
           requests:

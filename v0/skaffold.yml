@@ -1,0 +1,44 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+
+metadata:
+  name: v0
+
+
+
+build:
+
+  tagPolicy:
+    sha256: {}
+
+  artifacts:
+    - image: template
+      context: sandbox/template
+      docker:
+        dockerfile: dockerfile
+
+    - image: agent
+      context: sandbox/agent
+      docker:
+        dockerfile: dockerfile
+
+    - image: sandbox
+      context: sandbox/server
+      docker:
+        dockerfile: dockerfile
+
+    - image: router
+      context: sandbox/router
+      docker:
+        dockerfile: dockerfile
+
+manifests:
+  rawYaml:
+    - k8s/ingress.yml
+    - k8s/rbac.yml
+    - k8s/router-deployment.yml
+    - k8s/router-service.yml
+    - k8s/sandbox-server-deployment.yml
+    - k8s/sandbox-server-service.yml
+    - k8s/secrets.yml
+
