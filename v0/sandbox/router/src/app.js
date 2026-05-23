@@ -20,9 +20,18 @@ app.get("/_status/readyz", (req, res) => {
 })
 
 app.use(async (req, res, next) => {
+
+    /**
+     * uuid.preview.localhost
+     * uuid.agent.localhost
+     */
+
+
     const host = req.host
     const uuid = host.split('.')[ 0 ]
-    const serviceName = "http://sandbox-service-" + uuid
+    const serviceName =
+        host.split(".")[ 1 ] == "preview" ?
+            `http://sandbox-service-${uuid}` : `http://sandbox-service-${uuid}:8080`
 
     await redis.expire(`sandbox:${uuid}`, 60 * 2)
 
