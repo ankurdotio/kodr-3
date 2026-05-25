@@ -72,7 +72,7 @@ app.get('/read-files', async (req, res) => {
     }
 
     const fileList = files.split(',').map(file => file.trim());
-    
+
     const result = {};
 
     for (const file of fileList) {
@@ -101,7 +101,7 @@ app.get('/read-files', async (req, res) => {
  * }
  */
 app.post('/update-files', async (req, res) => {
-    const files = req.body;
+    const files = req.body.files;
     if (!files || typeof files !== 'object') {
         return res.status(400).json({ error: 'Invalid request body' });
     }

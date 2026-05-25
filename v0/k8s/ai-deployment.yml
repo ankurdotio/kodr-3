@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ai-deployment
+  labels:
+    name:  ai-deployment
+spec:
+  replicas:  1
+  selector:
+    matchLabels:
+      app:  ai-orchestrator
+  template:
+    metadata:
+      labels:
+        app:  ai-orchestrator
+    spec:
+      containers:
+      - image:  ai-orchestrator
+        name:  ai-orchestrator
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "128M"
+          limits:
+            cpu: "500m"
+            memory: "256M"
+        livenessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        env:
+        - name:  MISTRAL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name:  ai
+              key:  MISTRAL_API_KEY    
+        ports:
+        - containerPort:  3000
+          name:  http

@@ -4,6 +4,12 @@ metadata:
   name: v0-ingress
   labels:
     app.kubernetes.io/name: v0-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+
+  
 spec:
   ingressClassName: nginx
   rules:
@@ -14,6 +20,16 @@ spec:
         backend:
           service:
             name: sandbox-server-service
+            port: 
+              number: 80
+
+   - http:
+      paths:
+      - pathType: Prefix
+        path: "/api/ai"
+        backend:
+          service:
+            name: ai-service
             port: 
               number: 80
 

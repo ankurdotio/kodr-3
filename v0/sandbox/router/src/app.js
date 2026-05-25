@@ -19,29 +19,48 @@ app.get("/_status/readyz", (req, res) => {
     })
 })
 
+const proxies = {}
+const agentProxies = {}
+
+function getPreviewProxy(uuid) {
+
+    const serviceName = `http://sandbox-service-${uuid}`;
+
+    if (!proxies[ uuid ]) {
+        proxies[ uuid ] = createProxyMiddleware({
+            target: serviceName,
+            changeOrigin: true,
+            ws: true,
+        })
+    }
+
+    return proxies[ uuid ]
+
+}
+
+function getAgentProxy(uuid) {
+
+    const serviceName = `http://sandbox-service-${uuid}:8080`;
+    if (!agentProxies[ uuid ]) {
+        agentProxies[ uuid ] = createProxyMiddleware({
+            target: serviceName,
+            changeOrigin: true,
+            ws: true,
+        })
+    }
+
+    return agentProxies[ uuid ]
+
+}
+
 app.use(async (req, res, next) => {
-
-    /**
-     * uuid.preview.localhost
-     * uuid.agent.localhost
-     */
-
-
     const host = req.host
     const uuid = host.split('.')[ 0 ]
-    const serviceName =
-        host.split(".")[ 1 ] == "preview" ?
-            `http://sandbox-service-${uuid}` : `http://sandbox-service-${uuid}:8080`
+    const isPreview = host.split('.')[ 1 ] === "preview"
 
-    await redis.expire(`sandbox:${uuid}`, 60 * 2)
+    await redis.expire(`sandbox:${uuid}`, 60 * 20)
 
-    console.log(serviceName)
-
-    return createProxyMiddleware({
-        target: serviceName,
-        changeOrigin: true,
-        ws: true,
-    })(req, res, next)
+    return (isPreview ? getPreviewProxy(uuid) : getAgentProxy(uuid))(req, res, next)
 })
 
 const wsProxy = createProxyServer({
