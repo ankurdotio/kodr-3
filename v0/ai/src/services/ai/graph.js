@@ -10,8 +10,11 @@ const state = new StateSchema({
 const intentNode = async ({ messages }, config) => {
     console.log("Invoking Intent Agent with messages:", messages, "and config:", config)
 
-    const response = await intentAgent.invoke({ messages }, config)
-
+    const response = await intentAgent.invoke({ messages }, {
+        configurable: {
+            sandboxId: config.configurable.sandboxId
+        }
+    })
 
     const plan = response.structuredResponse.implementationPlan
 
@@ -22,7 +25,14 @@ const intentNode = async ({ messages }, config) => {
     }
 }
 const codeNode = async ({ messages }, config) => {
-    const response = await codeAgent.invoke({ messages }, config)
+
+    console.log("Invoking Code Agent with messages:", messages, "and config:", config)
+
+    const response = await codeAgent.invoke({ messages }, {
+        configurable: {
+            sandboxId: config.configurable.sandboxId
+        }
+    })
 
     return {
         messages: response.messages
@@ -30,10 +40,10 @@ const codeNode = async ({ messages }, config) => {
 }
 
 export const graph = new StateGraph(state)
-    .addNode("intent", intentNode)
+    // .addNode("intent", intentNode)
     .addNode("code", codeNode)
-    .addEdge("intent", "code")
-    .addEdge(START, "intent")
+    // .addEdge("intent", "code")
+    .addEdge(START, "code")
     .addEdge("code", END)
     .compile()
 

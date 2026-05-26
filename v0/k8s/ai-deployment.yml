@@ -42,6 +42,17 @@ spec:
             secretKeyRef:
               name:  ai
               key:  MISTRAL_API_KEY    
+        - name:  GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name:  ai
+              key:  GOOGLE_API_KEY
+
+        - name:  CLAUDE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name:  ai
+              key:  CLAUDE_API_KEY
         ports:
         - containerPort:  3000
           name:  http
