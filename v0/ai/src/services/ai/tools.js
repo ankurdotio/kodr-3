@@ -7,12 +7,11 @@ export const list_files = tool(async ({ }, config) => {
 
     const writer = config.writer
 
-    writer("Invoking list_files tool with config: " + JSON.stringify(config))
+    writer("Listing files in sandbox: " + config.configurable.sandboxId)
 
     console.log("Config in list_files tool:", config)
 
     console.log("Listing files in sandbox:", config.configurable.sandboxId)
-
 
     const response = await axios.get(`http://sandbox-service-${config.configurable.sandboxId}:8080/list-files`)
 
@@ -31,7 +30,7 @@ export const read_file = tool(async ({ files }, config) => {
 
     const writer = config.writer
 
-    writer("Invoking read_file tool with config: " + JSON.stringify(config) + " and files: " + JSON.stringify(files))
+    writer("Reading files in sandbox: " + config.configurable.sandboxId + " with files: " + JSON.stringify(files))
 
     console.log("Reading files in sandbox:", config.configurable.sandboxId, files)
 
@@ -60,7 +59,7 @@ export const update_file = tool(async ({ files = [] }, config) => {
 
     const writer = config.writer
 
-    writer("Invoking update_file tool with config: " + JSON.stringify(config) + " and files: " + JSON.stringify(files))
+    writer("Updating files in sandbox: " + config.configurable.sandboxId + " with files: " + JSON.stringify(files))
     console.log("Updating files in sandbox:", config.configurable.sandboxId, files)
 
     const payload = {};

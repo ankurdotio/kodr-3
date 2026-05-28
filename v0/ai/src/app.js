@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import { HumanMessage } from "langchain"
 import { codeAgent } from './services/ai/llm.js';
+import { graph } from './services/ai/graph.js';
 
 const app = express();
 
@@ -20,7 +21,6 @@ app.post('/api/ai/invoke', async (req, res) => {
     const { userInput, sandboxId } = req.body;
 
 
-
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -34,10 +34,10 @@ app.post('/api/ai/invoke', async (req, res) => {
     }, 15000);
 
     try {
-        const stream = await codeAgent.stream({
+        const stream = await graph.stream({
             messages: [ new HumanMessage(userInput) ]
         }, {
-            streamMode: "custom", subgraphs: true,
+            streamMode: "custom",
             configurable: {
                 sandboxId,
                 timeout: 6000000
@@ -49,10 +49,6 @@ app.post('/api/ai/invoke', async (req, res) => {
         for await (const message of stream) {
 
             console.log("Received message from Code Agent:", message)
-
-            if (message instanceof HumanMessage) {
-                continue; // skip human messages
-            }
 
             res.write(`data: ${JSON.stringify(message)}\n\n`); // send message to client as SSE
         }
