@@ -32,6 +32,16 @@ spec:
             name: sandbox-server-service
             port: 
               number: 80
+              
+   - http:
+      paths:
+      - pathType: Prefix
+        path: "/api/auth"
+        backend:
+          service:
+            name: auth-service
+            port: 
+              number: 80
 
    - http:
       paths:

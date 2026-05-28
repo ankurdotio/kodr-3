@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  auth-deployment
+  labels:
+    name:  auth-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  auth
+  template:
+    metadata:
+      labels:
+        app:  auth
+    spec:
+      containers:
+      - image:  auth
+        name:  auth-container
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "128M"
+          limits:
+            cpu: "500m"
+            memory: "256M"
+        livenessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 3000
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        env:
+        - name:  AUTH_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: AUTH_DB_URL  
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt
+              key: JWT_SECRET
+        ports:
+        - containerPort:  3000
+          name:  express-server

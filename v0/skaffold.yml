@@ -36,6 +36,11 @@ build:
       context: ai
       docker:
         dockerfile: dockerfile
+    
+    - image: auth
+      context: auth
+      docker:
+        dockerfile: dockerfile
 
 manifests:
   rawYaml:
@@ -48,5 +53,7 @@ manifests:
     - k8s/sandbox-server-deployment.yml
     - k8s/sandbox-server-service.yml
     - k8s/secrets.yml
+    - k8s/auth-deployment.yml
+    - k8s/auth-service.yml
 
 
