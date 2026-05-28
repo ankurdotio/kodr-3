@@ -42,6 +42,11 @@ build:
       docker:
         dockerfile: dockerfile
 
+    - image: sync
+      context: sandbox/sync-agent
+      docker:
+        dockerfile: dockerfile
+
 manifests:
   rawYaml:
     - k8s/ai-deployment.yml

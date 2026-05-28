@@ -101,7 +101,7 @@ You must ALWAYS respond with a single valid JSON object matching the defined sch
 })
 
 export const codeAgent = createAgent({
-  model: gemini,
+  model: model,
   tools: [ list_files, read_file, update_file ],
   systemPrompt: ` 
 You are an autonomous frontend engineering agent. You receive a user's natural language request 

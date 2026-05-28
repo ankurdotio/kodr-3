@@ -1,6 +1,6 @@
 import k8sCoreApi from "./config.js";
 
-export async function createPod(sandboxId) {
+export async function createPod(sandboxId, projectId) {
     const podManifest = {
         metadata: {
             name: `sandbox-pod-${sandboxId}`,
@@ -60,6 +60,63 @@ export async function createPod(sandboxId) {
                         {
                             name: "workspacevolume",
                             mountPath: "/workspace"
+                        }
+                    ]
+                },
+                {
+                    image: "sync",
+                    name: "sync-container",
+                    ports: [ { containerPort: 3000, protocol: "TCP", name: "sync-port" } ],
+                    resources: {
+                        limits: { cpu: "500m", memory: "128Mi" },
+                        requests: { cpu: "250m", memory: "64Mi" }
+                    },
+                    volumeMounts: [
+                        {
+                            name: "workspacevolume",
+                            mountPath: "/workspace"
+                        }
+                    ],
+                    env: [
+                        {
+                            name: "AWS_REGION",
+                            valueFrom: {
+                                secretKeyRef: {
+                                    name: "aws",
+                                    key: "AWS_REGION"
+                                }
+                            }
+                        },
+                        {
+                            name: "AWS_ACCESS_KEY_ID",
+                            valueFrom: {
+                                secretKeyRef: {
+                                    name: "aws",
+                                    key: "AWS_ACCESS_KEY_ID"
+                                }
+                            }
+                        },
+                        {
+                            name: "AWS_SECRET_ACCESS_KEY",
+                            valueFrom: {
+                                secretKeyRef: {
+                                    name: "aws",
+                                    key: "AWS_SECRET_ACCESS_KEY"
+                                }
+                            }
+                        },
+                        {
+                            name: "S3_BUCKET",
+                            valueFrom: {
+                                secretKeyRef: {
+                                    name: "aws",
+                                    key: "S3_BUCKET"
+                                }
+                            }
+                        },
+                        {
+                            name: "PROJECTID",
+                            value: projectId
                         }
                     ]
                 }

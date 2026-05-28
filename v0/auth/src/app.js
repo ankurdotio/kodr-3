@@ -10,6 +10,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.get("/_status/healthz", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
+app.get("/_status/readyz", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
 app.use('/api/auth', authRoutes);
 
 export default app;

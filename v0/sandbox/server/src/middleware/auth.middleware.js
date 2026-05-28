@@ -1,7 +1,7 @@
 import { verifyToken } from '../utils/utils.js';
 
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
 
     const token = req.headers[ 'authorization' ]?.split(' ')[ 1 ]
         || req.cookies[ 'token' ];
@@ -11,7 +11,8 @@ export const authMiddleware = (req, res, next) => {
     }
 
     try {
-        const decoded = verifyToken(token);
+        const decoded = await verifyToken(token);
+        console.log("Decoded token:", decoded);
         req.user = decoded;
         next();
     } catch (err) {
