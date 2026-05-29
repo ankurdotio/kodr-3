@@ -47,6 +47,12 @@ spec:
             secretKeyRef:
               name: jwt
               key: JWT_SECRET
+
+        - name: MQ_URL
+          valueFrom:
+            secretKeyRef:
+              name: mq
+              key: MQ_URL
         ports:
         - containerPort:  3000
           name:  express-server

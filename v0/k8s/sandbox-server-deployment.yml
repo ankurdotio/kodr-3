@@ -55,6 +55,13 @@ spec:
               secretKeyRef:
                 name: database
                 key: SANDBOX_DB_URL
+          
+          - name: MQ_URL
+            valueFrom:
+              secretKeyRef:
+                name: mq
+                key: MQ_URL
+                
         ports:
         - containerPort:  3000
           name:  http

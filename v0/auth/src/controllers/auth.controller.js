@@ -1,5 +1,6 @@
 import userModel from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
+import { channel, QUEUE_NAME } from '../services/message.broker.js';
 
 
 
@@ -20,6 +21,15 @@ export const register = async (req, res) => {
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, { httpOnly: true });
+
+        // Send user data to message broker
+        const userData = {
+            id: newUser._id,
+            name: newUser.name,
+            email: newUser.email
+        };
+
+        channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(userData)), { persistent: true });
 
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
