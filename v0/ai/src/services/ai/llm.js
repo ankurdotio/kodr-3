@@ -6,35 +6,41 @@ import * as z from "zod"
 import { ChatAnthropic } from "@langchain/anthropic";
 
 const model = new ChatAnthropic({
-  model: "claude-sonnet-4-20250514",
+  model: "claude-sonnet-4-6",
   apiKey: process.env.CLAUDE_API_KEY,
-  temperature: 0
+  temperature: 0,
+  streaming: true
 });
 
 const mediumModel = new ChatMistralAI({
   model: "mistral-medium-latest",
-  apiKey: process.env.MISTRAL_API_KEY
+  apiKey: process.env.MISTRAL_API_KEY,
+  streaming: true
 })
 
 const gemini = new ChatGoogle({
   apiKey: process.env.GOOGLE_API_KEY,
-  model: "gemini-flash-latest"
+  model: "gemini-flash-latest",
+  streaming: true
 })
 
 const largeModel = new ChatMistralAI({
   model: "mistral-large-latest",
   apiKey: process.env.MISTRAL_API_KEY,
-  temperature: 0.2
+  temperature: 0.2,
+  streaming: true
 })
 
 const smallModel = new ChatMistralAI({
   model: "mistral-small-latest",
-  apiKey: process.env.MISTRAL_API_KEY
+  apiKey: process.env.MISTRAL_API_KEY,
+  streaming: true
 })
 
 const codeModel = new ChatMistralAI({
   model: "codestral-latest",
-  apiKey: process.env.MISTRAL_API_KEY
+  apiKey: process.env.MISTRAL_API_KEY,
+  streaming: true
 })
 
 export const intentAgent = createAgent({

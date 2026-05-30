@@ -8,10 +8,17 @@ const state = new StateSchema({
 
 
 const intentNode = async ({ messages }, config) => {
+    if (config.writer) {
+        config.writer({ type: "message", content: "🤖 Analyzing request and planning file structure...\n" });
+    }
 
     const response = await intentAgent.invoke({ messages }, config)
 
     const plan = response.structuredResponse.implementationPlan
+
+    if (config.writer) {
+        config.writer({ type: "message", content: "✅ Implementation plan generated.\n\n" });
+    }
 
     console.log("Plan:", plan)
 
@@ -20,10 +27,21 @@ const intentNode = async ({ messages }, config) => {
     }
 }
 const codeNode = async ({ messages }, config) => {
-
     console.log("Invoking Code Agent with messages:", messages, "and config:", config)
 
-    const response = await codeAgent.invoke({ messages }, config)
+    const response = await codeAgent.invoke({ messages }, {
+        ...config,
+        callbacks: [
+            ...(config.callbacks || []),
+            {
+                handleLLMNewToken(token) {
+                    if (config.writer && token) {
+                        config.writer({ type: "message", content: token });
+                    }
+                }
+            }
+        ]
+    })
 
     return {
         messages: response.messages

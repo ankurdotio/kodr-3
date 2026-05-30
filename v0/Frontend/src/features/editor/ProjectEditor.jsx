@@ -5,8 +5,44 @@ import { useTheme } from '../theme/ThemeContext';
 import Editor from '@monaco-editor/react';
 import { 
   ArrowLeft, Sun, Moon, LogOut, Play, Code, Eye, 
-  ExternalLink, Send, Sparkles, Folder, File, Save, CheckCircle2, AlertTriangle, RefreshCw 
+  ExternalLink, Send, Sparkles, Folder, File, Save, CheckCircle2, AlertTriangle, RefreshCw,
+  FileCode, FileJson, FileText, FileImage, FileCog
 } from 'lucide-react';
+
+function buildFileTree(filePaths) {
+  const root = { name: 'root', type: 'directory', children: {} };
+
+  for (const path of filePaths) {
+    const parts = path.split('/');
+    let current = root;
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isLast = i === parts.length - 1;
+
+      if (isLast) {
+        current.children[part] = {
+          name: part,
+          type: 'file',
+          path: path
+        };
+      } else {
+        const dirPath = parts.slice(0, i + 1).join('/');
+        if (!current.children[part]) {
+          current.children[part] = {
+            name: part,
+            type: 'directory',
+            path: dirPath,
+            children: {}
+          };
+        }
+        current = current.children[part];
+      }
+    }
+  }
+
+  return root;
+}
 
 export default function ProjectEditor() {
   const { sandboxId } = useParams();
@@ -26,6 +62,16 @@ export default function ProjectEditor() {
   const [fileLoading, setFileLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Folder expand/collapse state
+  const [expandedFolders, setExpandedFolders] = useState({});
+
+  const toggleFolder = (dirPath) => {
+    setExpandedFolders(prev => ({
+      ...prev,
+      [dirPath]: prev[dirPath] === undefined ? false : !prev[dirPath]
+    }));
+  };
 
   // AI Chat state
   const [messages, setMessages] = useState([
@@ -250,6 +296,91 @@ export default function ProjectEditor() {
     return 'javascript';
   };
 
+  const getFileIcon = (fileName, isActive) => {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const activeClass = isActive ? 'text-[var(--accent)]' : 'text-neutral-400';
+    
+    if (['js', 'jsx', 'ts', 'tsx'].includes(ext)) {
+      return <FileCode className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-blue-400 dark:text-blue-500'}`} />;
+    }
+    if (ext === 'json') {
+      return <FileJson className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-amber-500'}`} />;
+    }
+    if (['css', 'html'].includes(ext)) {
+      return <FileCode className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-orange-400 dark:text-orange-500'}`} />;
+    }
+    if (['png', 'jpg', 'jpeg', 'svg', 'ico', 'webp'].includes(ext)) {
+      return <FileImage className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-emerald-400 dark:text-emerald-500'}`} />;
+    }
+    if (['md', 'txt'].includes(ext)) {
+      return <FileText className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-neutral-400'}`} />;
+    }
+    if (fileName.includes('config') || fileName.startsWith('.') || fileName.toLowerCase().includes('docker')) {
+      return <FileCog className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-pink-400 dark:text-pink-500'}`} />;
+    }
+    return <File className={`w-3.5 h-3.5 shrink-0 ${activeClass}`} />;
+  };
+
+  const renderNode = (node, level = 0) => {
+    if (node.type === 'file') {
+      const isActive = activeFile === node.path;
+      const isChanged = fileContents[node.path] !== undefined && fileContents[node.path] !== originalFileContents[node.path];
+      return (
+        <button
+          key={node.path}
+          onClick={() => handleFileSelect(node.path)}
+          className="w-full text-left px-2 py-1.5 rounded-[var(--radius)] font-mono text-xs flex items-center justify-between group transition-colors cursor-pointer"
+          style={{
+            backgroundColor: isActive ? 'var(--bg)' : 'transparent',
+            color: isActive ? 'var(--text)' : 'var(--muted)',
+            paddingLeft: `${level * 12 + 8}px`
+          }}
+        >
+          <span className="flex items-center gap-2 truncate">
+            {getFileIcon(node.name, isActive)}
+            <span className="truncate group-hover:text-[var(--text)] transition-colors">{node.name}</span>
+          </span>
+          {isChanged && (
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+          )}
+        </button>
+      );
+    }
+
+    const isExpanded = expandedFolders[node.path] !== false; // Default to true
+    const sortedChildren = Object.values(node.children).sort((a, b) => {
+      // Directories first, then files
+      if (a.type !== b.type) {
+        return a.type === 'directory' ? -1 : 1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    return (
+      <div key={node.path} className="space-y-0.5">
+        <button
+          onClick={() => toggleFolder(node.path)}
+          className="w-full text-left px-2 py-1.5 rounded-[var(--radius)] font-mono text-xs flex items-center gap-2 group transition-colors cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900"
+          style={{
+            color: 'var(--text)',
+            paddingLeft: `${level * 12 + 8}px`
+          }}
+        >
+          <Folder className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'text-[var(--accent)]' : 'text-neutral-400'}`} />
+          <span className="truncate font-semibold opacity-85 group-hover:opacity-100 transition-opacity">
+            {node.name}
+          </span>
+        </button>
+        
+        {isExpanded && (
+          <div className="space-y-0.5">
+            {sortedChildren.map(child => renderNode(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="h-screen flex flex-col page-transition overflow-hidden" style={{ backgroundColor: 'var(--bg)' }}>
       {/* Top Navbar */}
@@ -452,29 +583,14 @@ export default function ProjectEditor() {
                         <span className="text-[11px] font-mono" style={{ color: 'var(--muted)' }}>Reading files...</span>
                       </div>
                     ) : (
-                      files.map((file) => {
-                        const isActive = activeFile === file;
-                        const isChanged = fileContents[file] !== undefined && fileContents[file] !== originalFileContents[file];
-                        return (
-                          <button
-                            key={file}
-                            onClick={() => handleFileSelect(file)}
-                            className="w-full text-left px-2 py-1.5 rounded-[var(--radius)] font-mono text-xs flex items-center justify-between group transition-colors cursor-pointer"
-                            style={{
-                              backgroundColor: isActive ? 'var(--bg)' : 'transparent',
-                              color: isActive ? 'var(--text)' : 'var(--muted)'
-                            }}
-                          >
-                            <span className="flex items-center gap-2 truncate">
-                              <File className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[var(--accent)]' : 'text-neutral-400'}`} />
-                              <span className="truncate group-hover:text-[var(--text)] transition-colors">{file}</span>
-                            </span>
-                            {isChanged && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                            )}
-                          </button>
-                        );
-                      })
+                      Object.values(buildFileTree(files).children)
+                        .sort((a, b) => {
+                          if (a.type !== b.type) {
+                            return a.type === 'directory' ? -1 : 1;
+                          }
+                          return a.name.localeCompare(b.name);
+                        })
+                        .map(child => renderNode(child, 0))
                     )}
                   </div>
                 </div>

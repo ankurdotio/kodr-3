@@ -6,8 +6,9 @@ import { tool } from "langchain"
 export const list_files = tool(async ({ }, config) => {
 
     const writer = config.writer
-
-    writer("Listing files in sandbox: " + config.configurable.sandboxId)
+    if (writer) {
+        writer({ type: "message", content: "🔍 Listing files in project...\n" })
+    }
 
     console.log("Config in list_files tool:", config)
 
@@ -29,8 +30,9 @@ export const list_files = tool(async ({ }, config) => {
 export const read_file = tool(async ({ files }, config) => {
 
     const writer = config.writer
-
-    writer("Reading files in sandbox: " + config.configurable.sandboxId + " with files: " + JSON.stringify(files))
+    if (writer) {
+        writer({ type: "message", content: `📖 Reading files: ${files.join(', ')}...\n` })
+    }
 
     console.log("Reading files in sandbox:", config.configurable.sandboxId, files)
 
@@ -58,8 +60,10 @@ export const update_file = tool(async ({ files = [] }, config) => {
 
 
     const writer = config.writer
-
-    writer("Updating files in sandbox: " + config.configurable.sandboxId + " with files: " + JSON.stringify(files))
+    if (writer) {
+        const fileNames = files.map(f => f.path).join(', ');
+        writer({ type: "message", content: `💾 Updating files: ${fileNames}...\n` })
+    }
     console.log("Updating files in sandbox:", config.configurable.sandboxId, files)
 
     const payload = {};
