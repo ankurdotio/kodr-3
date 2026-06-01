@@ -92,8 +92,8 @@ export default function ProjectEditor() {
   // Key to force preview iframe refresh on file save or stream done
   const [iframeKey, setIframeKey] = useState(0);
 
-  const agentBaseUrl = `http://${sandboxId}.agent.localhost`;
-  const previewUrl = `http://${sandboxId}.preview.localhost`;
+  const agentBaseUrl = `https://${sandboxId}.agent.cryboy.in`;
+  const previewUrl = `https://${sandboxId}.preview.cryboy.in`;
 
   // Fetch file list on load
   useEffect(() => {

@@ -7,6 +7,7 @@ import { redis, subscriber } from './config/redis.js';
 import { authMiddleware } from "./middleware/auth.middleware.js";
 import projectModel from "./models/project.model.js";
 import cookieParser from "cookie-parser";
+import sandboxModel from './models/sandbox.model.js';
 
 const app = express();
 
@@ -70,20 +71,38 @@ app.get("/api/sandbox/project", async (req, res) => {
 })
 
 
-
-
 app.post("/api/sandbox/start", async (req, res) => {
     const { projectId } = req.body;
     const sandboxId = uuid();
+    const user = req.user;
+
+    const isSandboxExists = await sandboxModel.findOne({
+        user: user.userId,
+    })
+
+    if (isSandboxExists) {
+
+        const sandboxId = isSandboxExists.sandbox;
+        await deletePod(sandboxId);
+        await deleteService(sandboxId);
+        await redis.del(`sandbox:${sandboxId}`);
+        await sandboxModel.findByIdAndDelete(isSandboxExists._id);
+
+    }
 
     await createPod(sandboxId, projectId);
     await createService(sandboxId);
     await redis.set(`sandbox:${sandboxId}`, "active", "EX", 60 * 20)
 
+    await sandboxModel.create({
+        user: user.userId,
+        sandbox: sandboxId
+    })
+
     res.status(201).json({
         message: "Sandbox environment created successfully",
         sandboxId,
-        preview: `${sandboxId}.preview.localhost`
+        preview: `${sandboxId}.preview.cryboy.in`,
     });
 
 })

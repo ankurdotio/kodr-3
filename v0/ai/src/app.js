@@ -34,7 +34,7 @@ app.post('/api/ai/invoke', async (req, res) => {
     }, 15000);
 
     try {
-        const stream = await graph.stream({
+        const stream = await codeAgent.stream({
             messages: [ new HumanMessage(userInput) ]
         }, {
             streamMode: "custom",

@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: resource-manager
       containers:
-      - image:  sandbox
+      - image:  329599656829.dkr.ecr.ap-southeast-1.amazonaws.com/sandbox
         name:  main-sandbox-server
         resources:
           requests:

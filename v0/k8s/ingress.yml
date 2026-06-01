@@ -23,7 +23,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-   - http:
+   - host: "www.cryboy.in"
+     http:
       paths:
       - pathType: Prefix
         path: "/api/sandbox"
@@ -33,7 +34,8 @@ spec:
             port: 
               number: 80
               
-   - http:
+   - host: "www.cryboy.in"
+     http:
       paths:
       - pathType: Prefix
         path: "/api/auth"
@@ -43,7 +45,8 @@ spec:
             port: 
               number: 80
 
-   - http:
+   - host: "www.cryboy.in"
+     http:
       paths:
       - pathType: Prefix
         path: "/api/ai"
@@ -53,7 +56,7 @@ spec:
             port: 
               number: 80
 
-   - host: "*.preview.localhost"
+   - host: "*.preview.cryboy.in"
      http:
       paths:
       - pathType: Prefix
@@ -64,7 +67,7 @@ spec:
             port:
               number: 80
 
-   - host: "*.agent.localhost"
+   - host: "*.agent.cryboy.in"
      http:
       paths:
       - pathType: Prefix

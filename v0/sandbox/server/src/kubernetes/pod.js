@@ -17,7 +17,7 @@ export async function createPod(sandboxId, projectId) {
             ],
             initContainers: [
                 {
-                    image: "template",
+                    image: "329599656829.dkr.ecr.ap-southeast-1.amazonaws.com/template",
                     name: "init-container",
                     command: [ "sh", "-c", "cp -r /workspace/. /load/" ],
                     volumeMounts: [
@@ -34,7 +34,7 @@ export async function createPod(sandboxId, projectId) {
             ],
             containers: [
                 {
-                    image: "template",
+                    image: "329599656829.dkr.ecr.ap-southeast-1.amazonaws.com/template",
                     name: "sandbox-container",
                     ports: [ { containerPort: 5173, protocol: "TCP", name: "sandbox-port" } ],
                     resources: {
@@ -49,7 +49,7 @@ export async function createPod(sandboxId, projectId) {
                     ]
                 },
                 {
-                    image: "agent",
+                    image: "329599656829.dkr.ecr.ap-southeast-1.amazonaws.com/agent",
                     name: "agent-container",
                     ports: [ { containerPort: 3000, protocol: "TCP", name: "agent-port" } ],
                     resources: {
@@ -64,7 +64,7 @@ export async function createPod(sandboxId, projectId) {
                     ]
                 },
                 {
-                    image: "sync",
+                    image: "329599656829.dkr.ecr.ap-southeast-1.amazonaws.com/sync",
                     name: "sync-container",
                     ports: [ { containerPort: 3000, protocol: "TCP", name: "sync-port" } ],
                     resources: {
